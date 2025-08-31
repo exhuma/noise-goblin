@@ -4,7 +4,7 @@
 #include "../logging.h"
 
 void setup_audio() {
-    log("setup_audio called");
+    logln("setup_audio called");
 }
 
 void play_audio(const char *url) {

@@ -63,3 +63,4 @@ dkms.conf
 
 # Project
 src/config.h
+.noise-goblin.conf

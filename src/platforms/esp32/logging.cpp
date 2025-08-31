@@ -9,6 +9,6 @@ void logln(const char *msg) {
     Serial.println(msg);
 }
 
-void setup_hardware() {
+void setup_logging() {
     Serial.begin(115200);
 }
