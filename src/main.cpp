@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <cstring>
 #include "config.h"
 #include "platforms/audio.h"
@@ -5,25 +6,36 @@
 #include "platforms/logging.h"
 #include "platforms/wifi.h"
 
+enum AppState { APP_REQUESTING_CONFIG, APP_RUNNING };
+AppState appState = APP_REQUESTING_CONFIG;
+
 void setup() {
     setup_logging();
     setup_audio();
     const char *ssid = get_config_value("wifi_ssid");
     const char *password = get_config_value("wifi_password");
-    if (!ssid || strcmp(ssid, "") == 0) {
-        ssid = WIFI_SSID;
-        set_config_value("wifi_ssid", ssid);
-    }
-    if (!password || strcmp(password, "") == 0) {
-        password = WIFI_PASSWORD;
-        set_config_value("wifi_password", password);
+    if (!ssid || strcmp(ssid, "") == 0 || !password || strcmp(password, "") == 0) {
+        appState = APP_REQUESTING_CONFIG;
+        return;
+    } else {
+        appState = APP_RUNNING;
     }
     connect_wifi(ssid, password);
     play_audio("http://vis.media-ice.musicradio.com/CapitalMP3");
 }
 
 void loop() {
-    audio_tick();
+    switch (appState) {
+    case APP_REQUESTING_CONFIG:
+    default:
+        if (config_tick()) {
+            appState = APP_RUNNING;
+        }
+        break;
+    case APP_RUNNING:
+        audio_tick();
+        break;
+    }
 }
 
 // Entry-point for POSIX platforms (ignored by ESP32)

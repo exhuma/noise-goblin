@@ -1,5 +1,6 @@
 #include "../config.h"
 #include "../logging.h"
+#include "./captive_portal.h"
 #include "nvs.h"
 #include "nvs_flash.h"
 
@@ -44,4 +45,19 @@ const void *set_config_value(const char *key, const char *value) {
     esp_err_t err = nvs_set_str(s_nvs_handle, key, value);
     nvs_commit(s_nvs_handle);
     return nullptr;
+}
+
+bool has_config() {
+    _init_nvs();
+    esp_err_t err = nvs_get_str(s_nvs_handle, "wifi_ssid", nullptr, nullptr);
+    return (err == ESP_OK);
+}
+
+bool config_tick() {
+    logln("config_tick called");
+    if (has_config()) {
+        return true;
+    }
+    start_captive_portal();
+    return false;
 }

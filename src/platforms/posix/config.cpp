@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <mutex>
 #include <sstream>
@@ -95,4 +96,20 @@ const void *set_config_value(const char *key, const char *value) {
     }
     save_config();
     return nullptr;
+}
+
+void request_config() {
+    std::string ssid;
+    std::string password;
+    std::cout << "Enter WiFi SSID: ";
+    std::getline(std::cin, ssid);
+    std::cout << "Enter WiFi Password: ";
+    std::getline(std::cin, password);
+    set_config_value("wifi_ssid", ssid.c_str());
+    set_config_value("wifi_password", password.c_str());
+}
+
+bool config_tick() {
+    request_config();  // <- blocking
+    return true;
 }
