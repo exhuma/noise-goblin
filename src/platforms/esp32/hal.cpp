@@ -1,12 +1,12 @@
 #include "../hal.h"
+#include "../../config.h"
 #include "Arduino.h"
 #include "Audio.h"
 #include "WiFi.h"
-#include "../../config.h"
 
-#define I2S_DOUT 15 // -> DIN
-#define I2S_LRC 16 // -> LRC
-#define I2S_BCLK 17 // -> BCLK
+#define I2S_DOUT 15  // -> DIN
+#define I2S_LRC 16   // -> LRC
+#define I2S_BCLK 17  // -> BCLK
 
 String ssid = WIFI_SSID;
 String password = WIFI_PASSWORD;
@@ -27,7 +27,7 @@ void setup() {
     Serial.println(F("Connecting to audio stream"));
     audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
     audio.setVolume(10);
-    if(!audio.connecttohost("http://vis.media-ice.musicradio.com/CapitalMP3")) {
+    if (!audio.connecttohost("http://vis.media-ice.musicradio.com/CapitalMP3")) {
         Serial.println("Failed to connect to host");
     }
 }
