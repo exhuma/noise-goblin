@@ -66,7 +66,10 @@ void handleConnect() {
         logln(("IP address: " + WiFi.localIP().toString()).c_str());
         set_config_value("wifi_ssid", ssid.c_str());
         set_config_value("wifi_password", pass.c_str());
-        server.send(200, "text/html", "<html><body><h3>Connection successful</h3></body></html>");
+        server.send(200, "text/html",
+                    "<html><body><h3>Connection successful. Restarting...</h3></body></html>");
+        delay(2000);
+        ESP.restart();
     } else {
         logln("Failed to connect.");
         server.send(200, "text/html", "<html><body><h3>Connection failed</h3></body></html>");
