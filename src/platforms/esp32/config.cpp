@@ -21,18 +21,18 @@ void _init_nvs() {
     }
 }
 
-const char *get_config_value(const char *key) {
+void get_config_value(const char *key, char *out_value, size_t out_size) {
     _init_nvs();
-    static char value[128];
-    size_t required_size = sizeof(value);
-    esp_err_t err = nvs_get_str(s_nvs_handle, key, value, &required_size);
-    log("get_config_value called with key: ");
-    logln(key);
-    if (err == ESP_OK) {
-        return value;
-    } else {
-        logln("Key not found, returning default.");
-        return "";
+    size_t required_size = out_size;
+    esp_err_t err = nvs_get_str(s_nvs_handle, key, out_value, &required_size);
+    if (err != ESP_OK) {
+        logln("Error reading value");
+        log("Key ");
+        logln(key);
+        logln(" not found, returning default.");
+        if (out_size > 0) {
+            out_value[0] = '\0';  // Ensure the output is an empty string
+        }
     }
 }
 

@@ -12,9 +12,11 @@ AppState appState = APP_REQUESTING_CONFIG;
 void setup() {
     setup_logging();
     setup_audio();
-    const char *ssid = get_config_value("wifi_ssid");
-    const char *password = get_config_value("wifi_password");
-    if (!ssid || strcmp(ssid, "") == 0 || !password || strcmp(password, "") == 0) {
+    char ssid[256];
+    char password[256];
+    get_config_value("wifi_ssid", ssid, sizeof(ssid));
+    get_config_value("wifi_password", password, sizeof(password));
+    if (strcmp(ssid, "") == 0 || strcmp(password, "") == 0) {
         appState = APP_REQUESTING_CONFIG;
         return;
     } else {
