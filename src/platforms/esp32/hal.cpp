@@ -4,34 +4,57 @@
 #include "Audio.h"
 #include "WiFi.h"
 
-#define I2S_DOUT 15  // -> DIN
-#define I2S_LRC 16   // -> LRC
-#define I2S_BCLK 17  // -> BCLK
-
-String ssid = WIFI_SSID;
-String password = WIFI_PASSWORD;
 Audio audio;
 
-void setup() {
-    Serial.begin(115200);
-    Serial.println(F("Resetting WiFi"));
+bool is_wifi_connected() {
+    return WiFi.status() == WL_CONNECTED;
+}
+
+const char *get_wifi_ssid() {
+    return WIFI_SSID;
+}
+
+const char *get_wifi_password() {
+    return WIFI_PASSWORD;
+}
+
+void log(const char *msg) {
+    Serial.print(msg);
+}
+
+void logln(const char *msg) {
+    Serial.println(msg);
+}
+
+void connect_wifi(const char *ssid, const char *password) {
+    logln("Resetting WiFi");
     WiFi.disconnect();
     WiFi.mode(WIFI_STA);
-    Serial.println(F("Connecting to WiFi"));
-    WiFi.begin(ssid.c_str(), password.c_str());
-    while (WiFi.status() != WL_CONNECTED) {
-        Serial.print(F("."));
+    logln("Connecting to WiFi");
+    WiFi.begin(ssid, password);
+    while (!is_wifi_connected()) {
+        log(".");
         delay(1500);
     }
-    Serial.println(F("Connected"));
-    Serial.println(F("Connecting to audio stream"));
-    audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
+    logln("Connected");
+}
+
+void setup_hardware() {
+    Serial.begin(115200);
+    audio.setPinout(17,  // I2S_BCLK
+                    16,  // I2S_LRC
+                    15   // I2S_DOUT
+    );
     audio.setVolume(10);
-    if (!audio.connecttohost("http://vis.media-ice.musicradio.com/CapitalMP3")) {
-        Serial.println("Failed to connect to host");
+}
+
+void play_audio(const char *url) {
+    logln("Connecting to audio stream");
+    if (!audio.connecttohost(url)) {
+        logln("Failed to connect to host");
     }
 }
 
-void loop() {
+void audio_tick() {
     audio.loop();
 }
