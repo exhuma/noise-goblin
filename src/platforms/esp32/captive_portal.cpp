@@ -37,8 +37,6 @@ void handleConnect() {
     String ssid = server.arg("ssid");
     String pass = server.arg("password");
 
-    server.send(200, "text/html", "<html><body><h3>Connecting...</h3></body></html>");
-
     logln(("Trying to connect to SSID: " + ssid).c_str());
     WiFi.begin(ssid.c_str(), pass.c_str());
 
@@ -55,14 +53,15 @@ void handleConnect() {
         logln(("IP address: " + WiFi.localIP().toString()).c_str());
         set_config_value("wifi_ssid", ssid.c_str());
         set_config_value("wifi_password", pass.c_str());
+        server.send(200, "text/html", "<html><body><h3>Connection successful</h3></body></html>");
     } else {
         logln("Failed to connect.");
+        server.send(200, "text/html", "<html><body><h3>Connection failed</h3></body></html>");
     }
 }
 
 void start_captive_portal() {
     if (PORTAL_STATE == PORTAL_RUNNING) {
-        logln("Captive portal already running.");
         return;
     }
     // Start Access Point
@@ -79,7 +78,18 @@ void start_captive_portal() {
     dnsServer.start(DNS_PORT, "*", myIP);
 
     // Setup web handlers
-    server.on("/", handleRoot);
+    // Serve the main page for all GET requests
+    server.onNotFound([]() {
+        if (server.method() == HTTP_GET) {
+            logln(("Redirecting " + server.uri() + " to root page").c_str());
+            handleRoot();
+        } else {
+            logln(("404 - Not Found: " + server.uri()).c_str());
+            server.send(404, "text/plain", "Not found");
+        }
+    });
+
+    // Only handle POST on /connect explicitly
     server.on("/connect", HTTP_POST, handleConnect);
     server.begin();
     PORTAL_STATE = PORTAL_RUNNING;

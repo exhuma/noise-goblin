@@ -54,10 +54,10 @@ bool has_config() {
 }
 
 bool config_tick() {
-    logln("config_tick called");
     if (has_config()) {
         return true;
     }
     start_captive_portal();
+    process_request();
     return false;
 }
