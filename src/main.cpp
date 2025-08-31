@@ -1,8 +1,11 @@
 #include "core/core.h"
-#include "platforms/hal.h"
+#include "platforms/audio.h"
+#include "platforms/logging.h"
+#include "platforms/wifi.h"
 
 void setup() {
-    setup_hardware();
+    setup_logging();
+    setup_audio();
     connect_wifi(get_wifi_ssid(), get_wifi_password());
     play_audio("http://vis.media-ice.musicradio.com/CapitalMP3");
 }

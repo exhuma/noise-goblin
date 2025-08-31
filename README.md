@@ -61,13 +61,13 @@ make
 │   ├── config.h              # Configuration settings
 │   ├── core                  # Core functionality
 │   └── platforms/            # Platform-specific implementations
-│       ├── hal.h             # Interface for hardware abstraction layer
+│       ├── <module>.h        # Interface for hardware abstraction layer
 │       ├── esp32/            # Implementation for ESP32 board
 │       └── posix/            # Implementation for POSIX systems
-├── .clang-format            # Code formatting rules
-├── .pre-commit-config.yaml  # Pre-commit hooks configuration
-├── platformio.ini           # PlatformIO configuration
-└── Makefile                 # Build automation
+├── .clang-format             # Code formatting rules
+├── .pre-commit-config.yaml   # Pre-commit hooks configuration
+├── platformio.ini            # PlatformIO configuration
+└── Makefile                  # Build automation
 ```
 
 ## Platform Support

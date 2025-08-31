@@ -8,10 +8,23 @@ CFLAGS = -Wall -Wextra -std=c11
 CXXFLAGS = -Wall -Wextra -std=c++11
 INCLUDES = -Isrc -Isrc/core -Isrc/platforms
 
-# Source files
-MAIN_SRC = src/main.cpp
-POSIX_SRC = src/platforms/posix/hal.cpp
-CORE_HEADERS = src/core/core.h src/platforms/hal.h
+# Source discovery (replace hard-coded filenames)
+# Top-level and platform source discovery. This keeps the POSIX build
+# limited to app, core and posix platform implementations so we don't
+# accidentally link ESP32-specific sources when building locally.
+SRC_DIR := src
+APP_SRCS := $(wildcard $(SRC_DIR)/*.cpp $(SRC_DIR)/*.c)
+CORE_SRCS := $(wildcard $(SRC_DIR)/core/*.cpp $(SRC_DIR)/core/*.c)
+POSIX_SRCS := $(wildcard $(SRC_DIR)/platforms/posix/*.cpp $(SRC_DIR)/platforms/posix/*.c)
+
+# All sources to link for the POSIX target (main + core + posix HAL)
+POSIX_LINK_SRCS := $(APP_SRCS) $(CORE_SRCS) $(POSIX_SRCS)
+
+# Find the application's main file (first match of *main.cpp)
+MAIN_SRC := $(firstword $(filter %main.cpp,$(APP_SRCS)))
+
+# Discover headers used for change-based rebuilding (optional)
+CORE_HEADERS := $(wildcard $(SRC_DIR)/core/*.h $(SRC_DIR)/platforms/*.h $(SRC_DIR)/platforms/*/*.h)
 
 # Output targets
 POSIX_TARGET = goblin.exe
@@ -38,12 +51,20 @@ help:
 # POSIX build target
 posix: $(POSIX_TARGET)
 
-$(POSIX_TARGET): $(MAIN_SRC) $(POSIX_SRC) $(CORE_HEADERS)
+$(POSIX_TARGET): $(POSIX_LINK_SRCS) $(CORE_HEADERS)
 	@echo "Building for POSIX..."
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(POSIX_TARGET) \
-		$(MAIN_SRC) \
-		$(POSIX_SRC)
+		$(POSIX_LINK_SRCS)
 	@echo "POSIX build complete: $(POSIX_TARGET)"
+
+# OS-aware helper variables for running/removing the POSIX target
+ifeq ($(OS),Windows_NT)
+RUN_EXE = .\\$(POSIX_TARGET)
+DEL_CMD = -del $(POSIX_TARGET) 2>nul || true
+else
+RUN_EXE = ./$(POSIX_TARGET)
+DEL_CMD = rm -f $(POSIX_TARGET) 2>/dev/null || true
+endif
 
 # ESP32 build target
 esp32:
@@ -62,9 +83,10 @@ monitor:
 	$(PIO) device monitor
 
 # Clean POSIX build
+
 clean-posix:
 	@echo "Cleaning POSIX build..."
-	-del $(POSIX_TARGET) 2>nul || rm -f $(POSIX_TARGET) 2>/dev/null || true
+	$(DEL_CMD)
 
 # Clean ESP32 build
 clean-esp32:
@@ -79,7 +101,7 @@ clean-all: clean-posix clean-esp32
 # Test POSIX build
 test-posix: posix
 	@echo "Running POSIX build..."
-	./$(POSIX_TARGET)
+	$(RUN_EXE)
 
 # Check code with PlatformIO
 check:
