@@ -4,6 +4,7 @@
 #include "platforms/audio.h"
 #include "platforms/config.h"
 #include "platforms/logging.h"
+#include "platforms/ui.h"
 #include "platforms/wifi.h"
 
 enum AppState { APP_REQUESTING_CONFIG, APP_RUNNING };
@@ -12,6 +13,7 @@ AppState appState = APP_REQUESTING_CONFIG;
 void setup() {
     setup_logging();
     setup_audio();
+    setup_ui();
     char ssid[256];
     char password[256];
     get_config_value("wifi_ssid", ssid, sizeof(ssid));
@@ -36,6 +38,7 @@ void loop() {
         break;
     case APP_RUNNING:
         audio_tick();
+        ui_tick();
         break;
     }
 }

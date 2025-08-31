@@ -117,3 +117,10 @@ bool config_tick() {
     request_config();  // <- blocking
     return true;
 }
+
+void clear_config_values() {
+    std::lock_guard<std::mutex> lk(g_mutex);
+    g_config.clear();
+    save_config();
+    logln("Configuration cleared.");
+}

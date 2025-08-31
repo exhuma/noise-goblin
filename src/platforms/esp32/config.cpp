@@ -61,3 +61,10 @@ bool config_tick() {
     process_request();
     return false;
 }
+
+void clear_config_values() {
+    _init_nvs();
+    nvs_erase_all(s_nvs_handle);
+    nvs_commit(s_nvs_handle);
+    logln("Configuration cleared.");
+}
