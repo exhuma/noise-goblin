@@ -22,11 +22,24 @@ PortalState PORTAL_STATE = PORTAL_OFF;
 
 void handleRoot() {
     String html =
-        "<!DOCTYPE html><html><body>"
+        "<!DOCTYPE html><html><head>"
+        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+        "<style>"
+        "body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }"
+        "h2 { color: #333; }"
+        "form { max-width: 300px; margin: auto; }"
+        "input[type=\"text\"], input[type=\"password\"] { "
+        "  width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }"
+        "input[type=\"submit\"] { "
+        "  background-color: #4CAF50; color: white; padding: 10px; border: none; "
+        "  width: 100%; cursor: pointer; }"
+        "input[type=\"submit\"]:hover { background-color: #45a049; }"
+        "</style>"
+        "</head><body>"
         "<h2>WiFi Setup</h2>"
         "<form action=\"/connect\" method=\"POST\">"
-        "SSID: <input type=\"text\" name=\"ssid\"><br>"
-        "Password: <input type=\"password\" name=\"password\"><br>"
+        "SSID: <input type=\"text\" name=\"ssid\" placeholder=\"Enter SSID\"><br>"
+        "Password: <input type=\"password\" name=\"password\" placeholder=\"Enter Password\"><br>"
         "<input type=\"submit\" value=\"Connect\">"
         "</form>"
         "</body></html>";
