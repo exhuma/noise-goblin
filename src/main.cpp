@@ -1,6 +1,5 @@
 #include <cstring>
 #include "config.h"
-#include "core/core.h"
 #include "platforms/audio.h"
 #include "platforms/config.h"
 #include "platforms/logging.h"
