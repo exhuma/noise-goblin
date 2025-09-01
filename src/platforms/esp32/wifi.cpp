@@ -13,9 +13,15 @@ void connect_wifi(const char *ssid, const char *password) {
     WiFi.mode(WIFI_STA);
     logln("Connecting to WiFi");
     WiFi.begin(ssid, password);
-    while (!is_wifi_connected()) {
+    int retries = 0;
+    while (!is_wifi_connected() && retries < 10) {
         log(".");
         delay(1500);
+        retries++;
     }
-    logln("Connected");
+    if (retries == 10) {
+        logln("Failed to Connect");
+    } else {
+        logln("Connected");
+    }
 }

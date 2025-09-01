@@ -9,7 +9,7 @@ void setup_audio() {
                     16,  // I2S_LRC
                     15   // I2S_DOUT
     );
-    audio.setVolume(10);
+    audio.setVolume(20);
 }
 
 void play_audio(const char *url) {

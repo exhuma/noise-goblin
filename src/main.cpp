@@ -25,7 +25,6 @@ void setup() {
         appState = APP_RUNNING;
     }
     connect_wifi(ssid, password);
-    play_audio("http://vis.media-ice.musicradio.com/CapitalMP3");
 }
 
 void loop() {
