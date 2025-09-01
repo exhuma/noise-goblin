@@ -1,6 +1,75 @@
 # Noise Goblin
 
-A multi-platform C++ project for ESP32 and POSIX systems built with PlatformIO.
+## Description
+
+An application for the ESP32-S3 board to trigger random sound-bytes.
+
+The project is inspired by a "toy-button" that can be loaded up with MP3-files
+which it then plays randomly on each button press. Another big inspiration comes
+an online collection of sound-bytes accessible via a private RESTful API.
+
+This project combines both: Pressing the button will fetch a random sound-byte
+from this online collection and play it.
+
+## Roadmap
+
+### ✅ Milestone 1: Basic Prototype
+
+#### Hardware & Basic UI
+
+- Wiring components up to be able to play sound-files from the Internet
+- Connect to a WiFi access point
+- Play an online web-radio stream
+
+#### Code
+
+- Basic PlatformIO/Arduino setup
+
+### ✅ Milestone 2: Trigger Button
+
+- Wire up a button to trigger sound playback
+- Hard coded list of sound-byte URLs
+- Fetch a random sound-byte from the list when the button is pressed
+
+#### Code
+
+- Introduce option to run a dummy implementation directly on Posix for quicker
+  feedback loop
+
+### Milestone 3: Dynamic Sound List
+
+#### Hardware
+
+- Battery Pack
+
+#### Code
+
+- Introduce dependency injection for improved platform abstraction.
+- Provide a configuration option for the sound-byte list
+- Replace hard-coded list with the dynamic online result
+
+### Milestone 4: Cleanup
+
+#### Hardware
+
+- Get a big fat button
+- Case
+
+#### Code
+
+- TBD
+
+### Milestone 5: More controls & Independenc
+
+#### Hardware
+
+- Add a volume control
+- Add SD-Card Reader
+
+#### Code
+
+- TBD
+
 
 ## Development Setup
 
@@ -11,74 +80,8 @@ A multi-platform C++ project for ESP32 and POSIX systems built with PlatformIO.
   toolchain)
 - [Python](https://python.org/) for pre-commit hooks
 
-### Code Formatting
-
-This project uses **clang-format** for consistent code formatting across all C++
-files.
-
-#### Installing clang-format
-
-**Windows (using winget):**
-```powershell
-winget install LLVM.ClangFormat
-```
-
-**Linux (Ubuntu/Debian):**
-```bash
-sudo apt install clang-format
-```
-
-**Linux (Fedora/RHEL):**
-```bash
-sudo dnf install clang-tools-extra
-```
-
-**macOS:**
-```bash
-brew install clang-format
-```
-
-### Building
-
-#### PlatformIO (Recommended)
-
-```bash
-# Build for default environment
-pio run
-```
-
-#### Manual Build (with w64devkit)
-
-```bash
-make
-```
-
-## Project Structure
-
-```
-├── src/
-│   ├── main.cpp              # Main application entry point
-│   ├── config.h              # Configuration settings
-│   ├── core                  # Core functionality
-│   └── platforms/            # Platform-specific implementations
-│       ├── <module>.h        # Interface for hardware abstraction layer
-│       ├── esp32/            # Implementation for ESP32 board
-│       └── posix/            # Implementation for POSIX systems
-├── .clang-format             # Code formatting rules
-├── .pre-commit-config.yaml   # Pre-commit hooks configuration
-├── platformio.ini            # PlatformIO configuration
-└── Makefile                  # Build automation
-```
-
 ## Platform Support
 
 - **ESP32**: IoT and embedded applications
-- **POSIX**: Linux, macOS, and Windows (via MinGW/w64devkit)
-
-## Contributing
-
-1. Ensure clang-format is installed and configured
-2. Install pre-commit hooks: `pre-commit install`
-3. Make your changes
-4. Code will be automatically formatted on commit
-5. Submit a pull request
+- **POSIX**: Linux, macOS, and Windows (via MinGW/w64devkit). For testing
+  purposes only.
