@@ -120,6 +120,7 @@ void setup_ui() {
     strip.begin();
     strip.show();
     strip.setBrightness(50);
+    randomSeed(analogRead(0));  // Seed the random number generator
 }
 /**
  * Blink the RGB LED several times in red without blocking
@@ -158,9 +159,10 @@ void ui_tick() {
     }
     if (digitalRead(PLAY_BUTTON) == LOW) {
         logln("Play button pressed");
-        // pick a random sound byte
-        int randomIndex = random(0, 20);
-        play_audio(
-            (String("https://base-url/") + soundByteNames[randomIndex]).c_str());
+        struct timeval tv;
+        gettimeofday(&tv, nullptr);
+        randomSeed(tv.tv_usec);            // Seed the random number generator with microseconds
+        int randomIndex = random(0, 200);  // Adjusted range to match soundByteNames array
+        play_audio((String("https://base-url/") + soundByteNames[randomIndex]).c_str());
     }
 }
