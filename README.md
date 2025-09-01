@@ -11,6 +11,12 @@ an online collection of sound-bytes accessible via a private RESTful API.
 This project combines both: Pressing the button will fetch a random sound-byte
 from this online collection and play it.
 
+## Wiring
+
+See https://app.cirkitdesigner.com/project/fc8b766f-41c9-44f6-97f5-d1bfeb38f578
+
+[![Wiring Diagram](docs/images/circuit_image.png)](docs/images/circuit_image.png)
+
 ## Roadmap
 
 ### ✅ Milestone 1: Basic Prototype
