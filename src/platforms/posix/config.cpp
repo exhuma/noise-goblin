@@ -2,7 +2,9 @@
 #include "../logging.h"
 
 #include <cstdlib>
+#include <cstring>
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <mutex>
 #include <sstream>
@@ -71,15 +73,18 @@ static bool save_config() {
     return true;
 }
 
-const char *get_config_value(const char *key) {
-    if (!key)
-        return nullptr;
+void get_config_value(const char *key, char *out_value, size_t out_size) {
+    if (!key || !out_value || out_size == 0) {
+        return;
+    }
     load_config();
     std::lock_guard<std::mutex> lk(g_mutex);
     auto it = g_config.find(key);
-    if (it == g_config.end())
-        return nullptr;
-    return it->second.c_str();
+    if (it == g_config.end()) {
+        return;
+    }
+    strncpy(out_value, it->second.c_str(), out_size);
+    out_value[out_size - 1] = '\0';  // Ensure null-termination
 }
 
 const void *set_config_value(const char *key, const char *value) {
@@ -95,4 +100,27 @@ const void *set_config_value(const char *key, const char *value) {
     }
     save_config();
     return nullptr;
+}
+
+void request_config() {
+    std::string ssid;
+    std::string password;
+    std::cout << "Enter WiFi SSID: ";
+    std::getline(std::cin, ssid);
+    std::cout << "Enter WiFi Password: ";
+    std::getline(std::cin, password);
+    set_config_value("wifi_ssid", ssid.c_str());
+    set_config_value("wifi_password", password.c_str());
+}
+
+bool config_tick() {
+    request_config();  // <- blocking
+    return true;
+}
+
+void clear_config_values() {
+    std::lock_guard<std::mutex> lk(g_mutex);
+    g_config.clear();
+    save_config();
+    logln("Configuration cleared.");
 }
