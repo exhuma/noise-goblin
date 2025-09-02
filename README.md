@@ -40,7 +40,7 @@ See https://app.cirkitdesigner.com/project/fc8b766f-41c9-44f6-97f5-d1bfeb38f578
 - Introduce option to run a dummy implementation directly on Posix for quicker
   feedback loop
 
-### Milestone 3: Dynamic Sound List
+### 🔜 Milestone 3: Dynamic Sound List
 
 #### Hardware
 
@@ -52,7 +52,7 @@ See https://app.cirkitdesigner.com/project/fc8b766f-41c9-44f6-97f5-d1bfeb38f578
 - Provide a configuration option for the sound-byte list
 - Replace hard-coded list with the dynamic online result
 
-### Milestone 4: Cleanup
+### 🔜 Milestone 4: Cleanup
 
 #### Hardware
 
@@ -63,7 +63,7 @@ See https://app.cirkitdesigner.com/project/fc8b766f-41c9-44f6-97f5-d1bfeb38f578
 
 - TBD
 
-### Milestone 5: More controls & Independenc
+### 🔜 Milestone 5: More controls & Independence
 
 #### Hardware
 
