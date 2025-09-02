@@ -6,8 +6,8 @@
 #include <DNSServer.h>
 #include <WebServer.h>
 #include <WiFi.h>
-#include "../config.h"
-#include "../logging.h"
+#include "../config.hpp"
+#include "../logging.hpp"
 
 const byte DNS_PORT = 53;
 DNSServer dnsServer;
@@ -46,37 +46,37 @@ void handleRoot() {
     server.send(200, "text/html", html);
 }
 
-void handleConnect() {
+void handleConnect(IConfig& config, ILogging& logger) {
     String ssid = server.arg("ssid");
     String pass = server.arg("password");
 
-    logln(("Trying to connect to SSID: " + ssid).c_str());
+    logger.logln(("Trying to connect to SSID: " + ssid).c_str());
     WiFi.begin(ssid.c_str(), pass.c_str());
 
     // Attempt connection for a few seconds
     int retries = 0;
     while (WiFi.status() != WL_CONNECTED && retries < 20) {
         delay(500);
-        logln(".");
+        logger.logln(".");
         retries++;
     }
 
     if (WiFi.status() == WL_CONNECTED) {
-        logln("Connected!");
-        logln(("IP address: " + WiFi.localIP().toString()).c_str());
-        set_config_value("wifi_ssid", ssid.c_str());
-        set_config_value("wifi_password", pass.c_str());
+        logger.logln("Connected!");
+        logger.logln(("IP address: " + WiFi.localIP().toString()).c_str());
+        config.set("wifi_ssid", ssid.c_str(), logger);
+        config.set("wifi_password", pass.c_str(), logger);
         server.send(200, "text/html",
                     "<html><body><h3>Connection successful. Restarting...</h3></body></html>");
         delay(2000);
         ESP.restart();
     } else {
-        logln("Failed to connect.");
+        logger.logln("Failed to connect.");
         server.send(200, "text/html", "<html><body><h3>Connection failed</h3></body></html>");
     }
 }
 
-void start_captive_portal() {
+void start_captive_portal(IConfig& config, ILogging& logger) {
     if (PORTAL_STATE == PORTAL_RUNNING) {
         return;
     }
@@ -85,33 +85,33 @@ void start_captive_portal() {
     WiFi.softAP(apSSID, apPassword);
 
     IPAddress myIP = WiFi.softAPIP();
-    logln("Captive portal started");
-    logln(("Connect your phone to WiFi: " + String(apSSID)).c_str());
-    logln(("Password: " + String(apPassword)).c_str());
-    logln(("Then open: http://" + myIP.toString()).c_str());
+    logger.logln("Captive portal started");
+    logger.logln(("Connect your phone to WiFi: " + String(apSSID)).c_str());
+    logger.logln(("Password: " + String(apPassword)).c_str());
+    logger.logln(("Then open: http://" + myIP.toString()).c_str());
 
     // DNS server to redirect all queries to our ESP
     dnsServer.start(DNS_PORT, "*", myIP);
 
     // Setup web handlers
     // Serve the main page for all GET requests
-    server.onNotFound([]() {
+    server.onNotFound([&logger]() {
         if (server.method() == HTTP_GET) {
-            logln(("Redirecting " + server.uri() + " to root page").c_str());
+            logger.logln(("Redirecting " + server.uri() + " to root page").c_str());
             handleRoot();
         } else {
-            logln(("404 - Not Found: " + server.uri()).c_str());
+            logger.logln(("404 - Not Found: " + server.uri()).c_str());
             server.send(404, "text/plain", "Not found");
         }
     });
 
     // Only handle POST on /connect explicitly
-    server.on("/connect", HTTP_POST, handleConnect);
+    server.on("/connect", HTTP_POST, [&config, &logger]() { handleConnect(config, logger); });
     server.begin();
     PORTAL_STATE = PORTAL_RUNNING;
 }
 
-void process_request() {
+void process_request(ILogging& logger) {
     dnsServer.processNextRequest();
     server.handleClient();
 }

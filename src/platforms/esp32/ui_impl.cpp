@@ -1,9 +1,9 @@
-#include "../ui.h"
+#include "ui_impl.hpp"
 #include <Adafruit_NeoPixel.h>
-#include "../audio.h"
-#include "../config.h"
-#include "../logging.h"
 #include "Arduino.h"
+#include "audio_impl.hpp"
+#include "config_impl.hpp"
+#include "logging_impl.hpp"
 
 #define RESET_BUTTON 4  // GPIO4
 #define PLAY_BUTTON 5   // GPIO5
@@ -113,19 +113,10 @@ const char* soundByteNames[100] = {"knockingonheavensdoor-godverdomme",
                                    "icq-startup",
                                    "badtaste-goodone"};
 
-void setup_ui() {
-    pinMode(RESET_BUTTON, INPUT_PULLUP);
-    pinMode(PLAY_BUTTON, INPUT_PULLUP);
-    pinMode(RGB_LED, OUTPUT);
-    strip.begin();
-    strip.show();
-    strip.setBrightness(50);
-    randomSeed(analogRead(0));  // Seed the random number generator
-}
 /**
  * Blink the RGB LED several times in red without blocking
  */
-void blink_strip() {
+void _blink_strip() {
     static unsigned long lastBlinkTime = 0;
     static int blinkState = 0;
     static int blinkCount = 0;
@@ -150,19 +141,29 @@ void blink_strip() {
     }
 }
 
-void ui_tick() {
+void Esp32Ui::setup(ILogging& logger) {
+    pinMode(RESET_BUTTON, INPUT_PULLUP);
+    pinMode(PLAY_BUTTON, INPUT_PULLUP);
+    pinMode(RGB_LED, OUTPUT);
+    strip.begin();
+    strip.show();
+    strip.setBrightness(50);
+    randomSeed(analogRead(0));  // Seed the random number generator
+}
+
+void Esp32Ui::tick(IAudio& audio, IConfig& config, ILogging& logger) {
     char buffer[16];
     sprintf(buffer, "%d", digitalRead(RESET_BUTTON));
     if (digitalRead(RESET_BUTTON) == LOW) {
-        clear_config_values();
-        blink_strip();
+        config.clear(logger);
+        _blink_strip();
     }
     if (digitalRead(PLAY_BUTTON) == LOW) {
-        logln("Play button pressed");
+        logger.logln("Play button pressed");
         struct timeval tv;
         gettimeofday(&tv, nullptr);
         randomSeed(tv.tv_usec);            // Seed the random number generator with microseconds
         int randomIndex = random(0, 200);  // Adjusted range to match soundByteNames array
-        play_audio((String("https://base-url/") + soundByteNames[randomIndex]).c_str());
+        audio.play((String("https://base-url/") + soundByteNames[randomIndex]).c_str(), logger);
     }
 }

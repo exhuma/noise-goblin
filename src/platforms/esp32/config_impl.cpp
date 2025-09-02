@@ -1,5 +1,4 @@
-#include "../config.h"
-#include "../logging.h"
+#include "config_impl.hpp"
 #include "./captive_portal.h"
 #include "nvs.h"
 #include "nvs_flash.h"
@@ -21,50 +20,49 @@ void _init_nvs() {
     }
 }
 
-void get_config_value(const char *key, char *out_value, size_t out_size) {
+bool _has_config() {
+    _init_nvs();
+    esp_err_t err = nvs_get_str(s_nvs_handle, "wifi_ssid", nullptr, nullptr);
+    return (err == ESP_OK);
+}
+
+void Esp32Config::get(const char *key, char *out_value, size_t out_size, ILogging &logger) {
     _init_nvs();
     size_t required_size = out_size;
     esp_err_t err = nvs_get_str(s_nvs_handle, key, out_value, &required_size);
     if (err != ESP_OK) {
-        logln("Error reading value");
-        log("Key ");
-        logln(key);
-        logln(" not found, returning default.");
+        logger.logln("Error reading value");
+        logger.log("Key ");
+        logger.logln(key);
+        logger.logln(" not found, returning default.");
         if (out_size > 0) {
             out_value[0] = '\0';  // Ensure the output is an empty string
         }
     }
 }
 
-const void *set_config_value(const char *key, const char *value) {
+void Esp32Config::set(const char *key, const char *value, ILogging &logger) {
     _init_nvs();
-    log("set_config_value called with key: ");
-    logln(key);
-    log("and value: ");
-    logln(value);
+    logger.log("set_config_value called with key: ");
+    logger.logln(key);
+    logger.log("and value: ");
+    logger.logln(value);
     esp_err_t err = nvs_set_str(s_nvs_handle, key, value);
     nvs_commit(s_nvs_handle);
-    return nullptr;
 }
 
-bool has_config() {
-    _init_nvs();
-    esp_err_t err = nvs_get_str(s_nvs_handle, "wifi_ssid", nullptr, nullptr);
-    return (err == ESP_OK);
-}
-
-bool config_tick() {
-    if (has_config()) {
+bool Esp32Config::tick(ILogging &logger) {
+    if (_has_config()) {
         return true;
     }
-    start_captive_portal();
-    process_request();
+    start_captive_portal(*this, logger);
+    process_request(logger);
     return false;
 }
 
-void clear_config_values() {
+void Esp32Config::clear(ILogging &logger) {
     _init_nvs();
     nvs_erase_all(s_nvs_handle);
     nvs_commit(s_nvs_handle);
-    logln("Configuration cleared.");
+    logger.logln("Configuration cleared.");
 }

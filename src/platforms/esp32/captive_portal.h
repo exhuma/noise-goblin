@@ -1,2 +1,2 @@
-void start_captive_portal();
-void process_request();
+void start_captive_portal(IConfig &config, ILogging &logger);
+void process_request(ILogging &logger);
