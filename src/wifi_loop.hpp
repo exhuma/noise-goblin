@@ -8,10 +8,10 @@ class WifiLoop {
   public:
     explicit WifiLoop(IWifi& wifi) : wifi_(wifi) {
     }
-    void setup(char* ssid, char* password, ILogging& logger) {
-        wifi_.setup(ssid, password, logger);
+    void setup(char* ssid, char* password) {
+        wifi_.setup(ssid, password);
     }
-    void tick(ILogging& logger) {
-        wifi_.tick(logger);
+    void tick() {
+        wifi_.tick();
     }
 };

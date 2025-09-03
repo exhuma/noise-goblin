@@ -6,7 +6,12 @@
 #include "../logging.hpp"
 
 struct PosixAudio : IAudio {
-    void setup(ILogging &logger) override;
-    void play(const char *url, ILogging &logger) override;
-    void tick(ILogging &logger) override;
+    explicit PosixAudio(ILogging &logger) : logger(logger) {
+    }
+    void setup() override;
+    void play(const char *url) override;
+    void tick() override;
+
+  private:
+    ILogging &logger;
 };

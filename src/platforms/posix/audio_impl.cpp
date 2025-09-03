@@ -5,16 +5,16 @@
 #include <unistd.h>
 #include "../logging.hpp"
 
-void PosixAudio::setup(ILogging &logger) {
+void PosixAudio::setup() {
     logger.logln("PosixAudio setup called");
 }
 
-void PosixAudio::play(const char *url, ILogging &logger) {
+void PosixAudio::play(const char *url) {
     logger.log("PosixAudio play called with url: ");
     logger.logln(url);
 }
 
-void PosixAudio::tick(ILogging &logger) {
+void PosixAudio::tick() {
     logger.logln("PosixAudio tick called");
     sleep(1);
 }

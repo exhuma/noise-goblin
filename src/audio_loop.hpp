@@ -8,13 +8,13 @@ class AudioLoop {
   public:
     explicit AudioLoop(IAudio& audio) : audio_(audio) {
     }
-    void setup(ILogging& logger) {
-        audio_.setup(logger);
+    void setup() {
+        audio_.setup();
     }
-    void play(const char* url, ILogging& logger) {
-        audio_.play(url, logger);
+    void play(const char* url) {
+        audio_.play(url);
     }
-    void tick(ILogging& logger) {
-        audio_.tick(logger);
+    void tick() {
+        audio_.tick();
     }
 };

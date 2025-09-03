@@ -2,7 +2,13 @@
 #include "../wifi.hpp"
 
 struct PosixWifi : IWifi {
-    bool is_wifi_connected(ILogging &logger) override;
-    void setup(const char *ssid, const char *password, ILogging &logger) override;
-    void tick(ILogging &logger) override;
+    explicit PosixWifi(ILogging& logger) : logger(logger) {
+    }
+
+    bool is_wifi_connected() override;
+    void setup(const char* ssid, const char* password) override;
+    void tick() override;
+
+  private:
+    ILogging& logger;
 };

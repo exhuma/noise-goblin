@@ -4,7 +4,12 @@
 #include "../logging.hpp"
 
 struct Esp32Audio : IAudio {
-    void setup(ILogging& logger) override;
-    void play(const char* url, ILogging& logger) override;
-    void tick(ILogging& logger) override;
+    explicit Esp32Audio(ILogging& logger) : logger(logger) {
+    }
+    void setup() override;
+    void play(const char* url) override;
+    void tick() override;
+
+  private:
+    ILogging& logger;
 };

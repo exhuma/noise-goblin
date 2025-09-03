@@ -1,9 +1,6 @@
 #include "ui_impl.hpp"
 #include <Adafruit_NeoPixel.h>
 #include "Arduino.h"
-#include "audio_impl.hpp"
-#include "config_impl.hpp"
-#include "logging_impl.hpp"
 
 #define RESET_BUTTON 4  // GPIO4
 #define PLAY_BUTTON 5   // GPIO5
@@ -141,7 +138,7 @@ void _blink_strip() {
     }
 }
 
-void Esp32Ui::setup(ILogging& logger) {
+void Esp32Ui::setup() {
     pinMode(RESET_BUTTON, INPUT_PULLUP);
     pinMode(PLAY_BUTTON, INPUT_PULLUP);
     pinMode(RGB_LED, OUTPUT);
@@ -151,11 +148,11 @@ void Esp32Ui::setup(ILogging& logger) {
     randomSeed(analogRead(0));  // Seed the random number generator
 }
 
-void Esp32Ui::tick(IAudio& audio, IConfig& config, ILogging& logger) {
+void Esp32Ui::tick() {
     char buffer[16];
     sprintf(buffer, "%d", digitalRead(RESET_BUTTON));
     if (digitalRead(RESET_BUTTON) == LOW) {
-        config.clear(logger);
+        config.clear();
         _blink_strip();
     }
     if (digitalRead(PLAY_BUTTON) == LOW) {
@@ -164,6 +161,6 @@ void Esp32Ui::tick(IAudio& audio, IConfig& config, ILogging& logger) {
         gettimeofday(&tv, nullptr);
         randomSeed(tv.tv_usec);            // Seed the random number generator with microseconds
         int randomIndex = random(0, 200);  // Adjusted range to match soundByteNames array
-        audio.play((String("https://base-url/") + soundByteNames[randomIndex]).c_str(), logger);
+        audio.play((String("https://base-url/") + soundByteNames[randomIndex]).c_str());
     }
 }

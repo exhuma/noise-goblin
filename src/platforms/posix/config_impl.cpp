@@ -73,18 +73,18 @@ static bool save_config(ILogging &logger) {
     return true;
 }
 
-void request_config(IConfig &config, ILogging &logger) {
+void request_config(IConfig &config) {
     std::string ssid;
     std::string password;
     std::cout << "Enter WiFi SSID: ";
     std::getline(std::cin, ssid);
     std::cout << "Enter WiFi Password: ";
     std::getline(std::cin, password);
-    config.set("wifi_ssid", ssid.c_str(), logger);
-    config.set("wifi_password", password.c_str(), logger);
+    config.set("wifi_ssid", ssid.c_str());
+    config.set("wifi_password", password.c_str());
 }
 
-void PosixConfig::get(const char *key, char *out_value, size_t out_size, ILogging &logger) {
+void PosixConfig::get(const char *key, char *out_value, size_t out_size) {
     if (!key || !out_value || out_size == 0) {
         return;
     }
@@ -98,7 +98,7 @@ void PosixConfig::get(const char *key, char *out_value, size_t out_size, ILoggin
     out_value[out_size - 1] = '\0';  // Ensure null-termination
 }
 
-void PosixConfig::set(const char *key, const char *value, ILogging &logger) {
+void PosixConfig::set(const char *key, const char *value) {
     if (!key)
         return;
     load_config();
@@ -112,12 +112,12 @@ void PosixConfig::set(const char *key, const char *value, ILogging &logger) {
     save_config(logger);
 }
 
-bool PosixConfig::tick(ILogging &logger) {
-    request_config(*this, logger);  // <- blocking
+bool PosixConfig::tick() {
+    request_config(*this);  // <- blocking
     return true;
 }
 
-void PosixConfig::clear(ILogging &logger) {
+void PosixConfig::clear() {
     std::lock_guard<std::mutex> lk(g_mutex);
     g_config.clear();
     save_config(logger);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "platforms/config.hpp"
+#include "platforms/logging.hpp"
 
 class ConfigLoop {
     IConfig &config_;
@@ -8,16 +9,16 @@ class ConfigLoop {
   public:
     explicit ConfigLoop(IConfig &config) : config_(config) {
     }
-    void get(const char *key, char *out_value, size_t out_size, ILogging &logger) {
-        config_.get(key, out_value, out_size, logger);
+    void get(const char *key, char *out_value, size_t out_size) {
+        config_.get(key, out_value, out_size);
     }
-    void set(const char *key, const char *value, ILogging &logger) {
-        config_.set(key, value, logger);
+    void set(const char *key, const char *value) {
+        config_.set(key, value);
     }
-    void tick(ILogging &logger) {
-        config_.tick(logger);
+    void tick() {
+        config_.tick();
     }
-    void clear(ILogging &logger) {
-        config_.clear(logger);
+    void clear() {
+        config_.clear();
     }
 };

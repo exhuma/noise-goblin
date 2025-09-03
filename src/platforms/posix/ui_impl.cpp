@@ -1,9 +1,6 @@
 #include "ui_impl.hpp"
 #include <stdlib.h>
-#include <platforms/audio.hpp>
 #include <string>
-#include "../logging.hpp"
-#include "config_impl.hpp"
 
 const char* soundByteNames[100] = {"knockingonheavensdoor-godverdomme",
                                    "dp-and_so_begins_the_tale",
@@ -113,16 +110,16 @@ void _blink_strip(ILogging& logger) {
     logger.logln("Blinking strip");
 }
 
-void PosixUi::setup(ILogging& logger) {
+void PosixUi::setup() {
     logger.logln("Posix UI setup complete");
 }
 
-void PosixUi::tick(IAudio& audio, IConfig& config, ILogging& logger) {
+void PosixUi::tick() {
     char buffer[16];
     bool resetButtonPressed = false;  // TODO: dummy. Will read from fifo soon
     bool playButtonPressed = false;   // TODO: dummy. Will read from fifo soon
     if (resetButtonPressed) {
-        config.clear(logger);
+        config.clear();
         _blink_strip(logger);
     }
     if (playButtonPressed) {

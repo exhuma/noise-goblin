@@ -1,4 +1,5 @@
 #include "config_impl.hpp"
+#include "../logging.hpp"
 #include "./captive_portal.h"
 #include "nvs.h"
 #include "nvs_flash.h"
@@ -26,7 +27,7 @@ bool _has_config() {
     return (err == ESP_OK);
 }
 
-void Esp32Config::get(const char *key, char *out_value, size_t out_size, ILogging &logger) {
+void Esp32Config::get(const char *key, char *out_value, size_t out_size) {
     _init_nvs();
     size_t required_size = out_size;
     esp_err_t err = nvs_get_str(s_nvs_handle, key, out_value, &required_size);
@@ -41,7 +42,7 @@ void Esp32Config::get(const char *key, char *out_value, size_t out_size, ILoggin
     }
 }
 
-void Esp32Config::set(const char *key, const char *value, ILogging &logger) {
+void Esp32Config::set(const char *key, const char *value) {
     _init_nvs();
     logger.log("set_config_value called with key: ");
     logger.logln(key);
@@ -51,7 +52,7 @@ void Esp32Config::set(const char *key, const char *value, ILogging &logger) {
     nvs_commit(s_nvs_handle);
 }
 
-bool Esp32Config::tick(ILogging &logger) {
+bool Esp32Config::tick() {
     if (_has_config()) {
         return true;
     }
@@ -60,7 +61,7 @@ bool Esp32Config::tick(ILogging &logger) {
     return false;
 }
 
-void Esp32Config::clear(ILogging &logger) {
+void Esp32Config::clear() {
     _init_nvs();
     nvs_erase_all(s_nvs_handle);
     nvs_commit(s_nvs_handle);
