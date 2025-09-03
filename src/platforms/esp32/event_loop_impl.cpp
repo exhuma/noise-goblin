@@ -31,6 +31,7 @@ Esp32EventLoop::~Esp32EventLoop() {
 
 void Esp32EventLoop::setup() {
     eventQueue = xQueueCreate(QUEUE_LENGTH, ITEM_SIZE);
+    start();  // Start the event loop task
 }
 
 void Esp32EventLoop::start() {
