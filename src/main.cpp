@@ -1,5 +1,7 @@
 #include <cstdio>
 #include <cstring>
+#include <string>
+#include "app.hpp"
 
 #if defined(BUILD_ESP32)
     #include "platforms/esp32/audio_impl.hpp"
@@ -25,35 +27,34 @@ PosixConfig config(logging);
 PosixUi ui(audio, config, logging);
 #endif
 
-enum AppState { APP_REQUESTING_CONFIG, APP_RUNNING };
-AppState appState = APP_REQUESTING_CONFIG;
-
+// Instantiate the application with the active config implementation
+Application app(config, wifi, logging);
 void setup() {
     logging.setup();
     audio.setup();
     ui.setup();
-    std::string ssid = config.get("wifi_ssid");
-    std::string password = config.get("wifi_password");
-    if (ssid.empty() || password.empty()) {
-        appState = APP_REQUESTING_CONFIG;
-        return;
-    } else {
-        appState = APP_RUNNING;
-    }
-    wifi.setup(ssid.c_str(), password.c_str());
+    wifi.setup();
+    appState = app.getState();
+    logging.info("----- Setup Done --------------");
 }
 
 void loop() {
+    appState = app.getState();  // TODO replace with an event-handling system
+                                // using the ESP32 event loop
+    ui.tick();
     switch (appState) {
-    case APP_REQUESTING_CONFIG:
+    case APP_UNINITIALISED:
     default:
-        if (config.tick()) {
-            appState = APP_RUNNING;
-        }
+        logging.debug("App state: APP_UNINITIALISED");
+        config.tick();
+        break;
+    case APP_NO_NETWORK:
+        logging.debug("App state: APP_NO_NETWORK");
+        wifi.tick();
         break;
     case APP_RUNNING:
+        logging.debug("App state: APP_RUNNING");
         audio.tick();
-        ui.tick();
         wifi.tick();
         break;
     }
