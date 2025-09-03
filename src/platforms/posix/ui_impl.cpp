@@ -1,5 +1,8 @@
 #include "ui_impl.hpp"
+#include <fcntl.h>
 #include <stdlib.h>
+#include <termios.h>
+#include <unistd.h>
 #include <string>
 
 const char* soundByteNames[100] = {
@@ -111,22 +114,43 @@ void _blink_strip(ILogging& logger) {
     logger.info("Blinking strip");
 }
 
+void setNonCanonicalMode() {
+    struct termios t;
+    tcgetattr(STDIN_FILENO, &t);
+    t.c_lflag &= ~(ICANON | ECHO);  // Disable canonical mode and echo
+    tcsetattr(STDIN_FILENO, TCSANOW, &t);
+}
+
+bool isKeyPressed() {
+    struct timeval tv = {0, 0};
+    fd_set fds;
+    FD_ZERO(&fds);
+    FD_SET(STDIN_FILENO, &fds);
+    return select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv) > 0;
+}
+
+void restoreTerminalMode() {
+    struct termios t;
+    tcgetattr(STDIN_FILENO, &t);
+    t.c_lflag |= (ICANON | ECHO);  // Re-enable canonical mode and echo
+    tcsetattr(STDIN_FILENO, TCSANOW, &t);
+}
+
 void PosixUi::setup() {
     logger.info("Posix UI setup complete");
     logger.debug("UI Setup complete");
 }
 
 void PosixUi::tick() {
-    char buffer[16];
-    bool resetButtonPressed = false;  // TODO: dummy. Will read from fifo soon
-    bool playButtonPressed = false;   // TODO: dummy. Will read from fifo soon
-    if (resetButtonPressed) {
-        config.clear();
-        _blink_strip(logger);
+    setNonCanonicalMode();
+    if (isKeyPressed()) {
+        char c;
+        read(STDIN_FILENO, &c, 1);
+        if (c == 'r') {
+            eventLoop.postEvent(EVENT_RESET_BUTTON_PRESSED);
+        } else if (c == 'p') {
+            eventLoop.postEvent(EVENT_PLAY_BUTTON_PRESSED);
+        }
     }
-    if (playButtonPressed) {
-        logger.info("Play button pressed");
-        int randomIndex = rand() % 100;
-        logger.info("https://base-url/%s", soundByteNames[randomIndex]);
-    }
+    restoreTerminalMode();
 }
