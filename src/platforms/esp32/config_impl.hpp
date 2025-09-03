@@ -1,6 +1,5 @@
 #include "../config.hpp"
 #include "../logging.hpp"
-#include "./captive_portal.h"
 
 struct Esp32Config : IConfig {
     explicit Esp32Config(ILogging &logger) : logger(logger) {

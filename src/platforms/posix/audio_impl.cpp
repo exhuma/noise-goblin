@@ -1,9 +1,6 @@
-#pragma once
-
 #include "audio_impl.hpp"
 #include <stdio.h>
 #include <unistd.h>
-#include "../logging.hpp"
 
 void PosixAudio::setup() {
     logger.logln("PosixAudio setup called");

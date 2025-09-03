@@ -1,5 +1,4 @@
 #include "config_impl.hpp"
-#include "../logging.hpp"
 #include "./captive_portal.h"
 #include "nvs.h"
 #include "nvs_flash.h"
