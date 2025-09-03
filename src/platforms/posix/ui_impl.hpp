@@ -11,6 +11,7 @@ struct PosixUi : IUserInterface {
     }
     void setup() override;
     void tick() override;
+    void displayConfigCleared() override;
 
   private:
     ILogging& logger;

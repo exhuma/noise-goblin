@@ -154,3 +154,9 @@ void PosixUi::tick() {
     }
     restoreTerminalMode();
 }
+
+void PosixUi::displayConfigCleared() {
+    logger.info("!!! ---------------------");
+    logger.info("!!! Configuration cleared");
+    logger.info("!!! ---------------------");
+}

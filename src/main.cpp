@@ -43,6 +43,7 @@ void setup() {
         case EVENT_RESET_BUTTON_PRESSED:
             logging.debug("Reset button prersed event received");
             config.clear();
+            ui.displayConfigCleared();
             break;
         case EVENT_PLAY_BUTTON_PRESSED:
             logging.debug("Play button pressed event received");
