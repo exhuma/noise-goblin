@@ -44,7 +44,7 @@ void Esp32Ui::setup() {
     pinMode(RGB_LED, OUTPUT);
     strip.begin();
     strip.show();
-    strip.setBrightness(50);
+    strip.setBrightness(5);
     randomSeed(analogRead(0));  // Seed the random number generator
     logger.debug("UI Setup complete");
 }
@@ -74,7 +74,10 @@ void Esp32Ui::tick() {
         strip.setPixelColor(0, strip.Color(255, 0, 0));
         break;
     case LedState::Normal:
-        strip.setPixelColor(0, strip.Color(0, 10, 0));
+        strip.setPixelColor(0, strip.Color(0, 255, 0));
+        break;
+    case LedState::Connecting:
+        strip.setPixelColor(0, strip.Color(255, 165, 0));
         break;
     }
     strip.show();

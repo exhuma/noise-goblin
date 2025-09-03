@@ -78,6 +78,7 @@ void loop() {
         config.tick();
         break;
     case APP_NO_NETWORK:
+        ui.setState(IUserInterface::LedState::Connecting);
         wifi.tick();
         wifi.connect(config.get(WIFI_SSID_KEY).c_str(),
                      config.get(WIFI_PASSWORD_KEY).c_str());
