@@ -17,5 +17,11 @@ struct Esp32EventLoop : IEventLoop {
     void run();
 
     std::condition_variable eventCondition;
+
+  public:
     EventCallback eventCallback;
+
+    EventCallback getEventCallback() const {
+        return eventCallback;
+    }
 };
