@@ -109,6 +109,7 @@ void Esp32Library::setup() {
 
 std::string Esp32Library::getRandomSound() {
     logger.info("Getting random sound");
+    srand(static_cast<unsigned int>(time(nullptr)));
     int index = rand() % 100;
     return soundByteNames[index];
 }
