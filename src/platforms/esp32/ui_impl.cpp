@@ -53,10 +53,14 @@ void Esp32Ui::tick() {
     char buffer[16];
     sprintf(buffer, "%d", digitalRead(RESET_BUTTON));
     if (digitalRead(RESET_BUTTON) == LOW) {
+        logger.debug("Reset button pressed");
         eventLoop.postEvent(EVENT_RESET_BUTTON_PRESSED);
+        delay(200);
     }
     if (digitalRead(PLAY_BUTTON) == LOW) {
+        logger.debug("Play button pressed");
         eventLoop.postEvent(EVENT_PLAY_BUTTON_PRESSED);
+        delay(200);
     }
     switch (ledState) {
     case 0:
