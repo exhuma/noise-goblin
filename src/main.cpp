@@ -18,6 +18,7 @@ Esp32Ui ui(audio, config, logging);
     #include "platforms/posix/audio_impl.hpp"
     #include "platforms/posix/config_impl.hpp"
     #include "platforms/posix/event_loop_impl.hpp"
+    #include "platforms/posix/library_impl.hpp"
     #include "platforms/posix/logging_impl.hpp"
     #include "platforms/posix/ui_impl.hpp"
     #include "platforms/posix/wifi_impl.hpp"
@@ -27,6 +28,7 @@ PosixWifi wifi(logging);
 PosixAudio audio(logging);
 PosixConfig config(logging);
 PosixUi ui(audio, config, logging, eventLoop);
+PosixLibrary library(logging);
 #endif
 
 // Instantiate the application with the active config implementation
@@ -39,6 +41,8 @@ void setup() {
     eventLoop.setup();
     appState = app.getState();
     eventLoop.setEventCallback([&](int event) {
+        std::string randomSound;
+        std::string url;
         switch (event) {
         case EVENT_RESET_BUTTON_PRESSED:
             logging.debug("Reset button prersed event received");
@@ -47,7 +51,9 @@ void setup() {
             break;
         case EVENT_PLAY_BUTTON_PRESSED:
             logging.debug("Play button pressed event received");
-            audio.play("https://base-url/sound1.wav");
+            randomSound = library.getRandomSound();
+            url = "https://base-url/" + randomSound + ".mp3";
+            audio.play(url.c_str());
             break;
         default:
             logging.error("Unknown event received: %d", event);
