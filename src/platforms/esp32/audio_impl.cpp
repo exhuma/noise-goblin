@@ -15,19 +15,21 @@ void Esp32Audio::setup() {
 }
 
 void Esp32Audio::play(std::string url) {
-    esp32_audio.stopSong();
     logger.debug("Playing %s", url.c_str());
     {
+        std::lock_guard<std::mutex> lock(urlMutex);
         currentUrl = url;
-        logger.debug("Set current URL to: %s -> %s", url.c_str(),
-                     currentUrl.c_str());
     }
 }
 
 void Esp32Audio::tick() {
     if (!currentUrl.empty()) {
+        esp32_audio.stopSong();
         const bool success = esp32_audio.connecttohost(currentUrl.c_str());
-        currentUrl.clear();
+        {
+            std::lock_guard<std::mutex> lock(urlMutex);
+            currentUrl.clear();
+        }
         if (!success) {
             logger.error("Failed to connect to host");
         }
