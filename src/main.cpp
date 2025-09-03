@@ -51,7 +51,7 @@ void setup() {
         case EVENT_RESET_BUTTON_PRESSED:
             logging.debug("Reset button prersed event received");
             config.clear();
-            ui.displayConfigCleared();
+            ui.setState(IUserInterface::LedState::Reset);
             break;
         case EVENT_PLAY_BUTTON_PRESSED:
             logging.debug("Play button pressed event received");
@@ -74,7 +74,7 @@ void loop() {
     switch (appState) {
     case APP_UNINITIALISED:
     default:
-        ui.displayCaptivePortal();
+        ui.setState(IUserInterface::LedState::Off);
         config.tick();
         break;
     case APP_NO_NETWORK:
@@ -83,7 +83,7 @@ void loop() {
                      config.get(WIFI_PASSWORD_KEY).c_str());
         break;
     case APP_RUNNING:
-        ui.displayNormal();
+        ui.setState(IUserInterface::LedState::Normal);
         audio.tick();
         wifi.tick();
         break;

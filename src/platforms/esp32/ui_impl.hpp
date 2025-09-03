@@ -11,14 +11,12 @@ struct Esp32Ui : IUserInterface {
     }
     void setup() override;
     void tick() override;
-    void displayConfigCleared() override;
-    void displayCaptivePortal() override;
-    void displayNormal() override;
+    void setState(LedState state) override;
 
   private:
     ILogging& logger;
     IAudio& audio;
     IConfig& config;
     IEventLoop& eventLoop;
-    int ledState;  // 0: off, 1: blue, 2: red
+    LedState ledState;
 };

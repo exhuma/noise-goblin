@@ -63,32 +63,23 @@ void Esp32Ui::tick() {
         delay(200);
     }
     switch (ledState) {
-    case 0:
-        strip.setPixelColor(0, strip.Color(0, 0, 0));  // Off
-        strip.show();
-        break;
-    case 1:
-        strip.setPixelColor(0, strip.Color(0, 0, 255));  // Blue
-        strip.show();
-        break;
-    case 2:
-        strip.setPixelColor(0, strip.Color(255, 0, 0));  // Red
-        strip.show();
-        break;
+    case LedState::Off:
     default:
-        ledState = 0;
+        strip.setPixelColor(0, strip.Color(0, 0, 0));
+        break;
+    case LedState::CaptivePortal:
+        strip.setPixelColor(0, strip.Color(0, 0, 255));
+        break;
+    case LedState::Reset:
+        strip.setPixelColor(0, strip.Color(255, 0, 0));
+        break;
+    case LedState::Normal:
+        strip.setPixelColor(0, strip.Color(0, 10, 0));
         break;
     }
+    strip.show();
 }
 
-void Esp32Ui::displayConfigCleared() {
-    ledState = 2;
-}
-
-void Esp32Ui::displayCaptivePortal() {
-    ledState = 1;
-}
-
-void Esp32Ui::displayNormal() {
-    ledState = 0;
+void Esp32Ui::setState(LedState state) {
+    ledState = state;
 }
