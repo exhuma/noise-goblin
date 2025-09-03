@@ -74,18 +74,15 @@ void loop() {
     switch (appState) {
     case APP_UNINITIALISED:
     default:
-        logging.debug("App state: APP_UNINITIALISED");
         ui.displayCaptivePortal();
         config.tick();
         break;
     case APP_NO_NETWORK:
-        logging.debug("App state: APP_NO_NETWORK");
         wifi.tick();
         wifi.connect(config.get(WIFI_SSID_KEY).c_str(),
                      config.get(WIFI_PASSWORD_KEY).c_str());
         break;
     case APP_RUNNING:
-        logging.debug("App state: APP_RUNNING");
         ui.displayNormal();
         audio.tick();
         wifi.tick();

@@ -78,16 +78,13 @@ void Esp32Ui::tick() {
 }
 
 void Esp32Ui::displayConfigCleared() {
-    logger.info("Configuration cleared");
     ledState = 2;
 }
 
 void Esp32Ui::displayCaptivePortal() {
-    logger.info("Displaying captive portal");
     ledState = 1;
 }
 
 void Esp32Ui::displayNormal() {
-    logger.info("Displaying normal UI");
     ledState = 0;
 }
