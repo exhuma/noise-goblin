@@ -23,23 +23,28 @@ PortalState PORTAL_STATE = PORTAL_OFF;
 void handleRoot() {
     String html =
         "<!DOCTYPE html><html><head>"
-        "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+        "<meta name=\"viewport\" content=\"width=device-width, "
+        "initial-scale=1\">"
         "<style>"
         "body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }"
         "h2 { color: #333; }"
         "form { max-width: 300px; margin: auto; }"
         "input[type=\"text\"], input[type=\"password\"] { "
-        "  width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }"
+        "  width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; "
+        "}"
         "input[type=\"submit\"] { "
-        "  background-color: #4CAF50; color: white; padding: 10px; border: none; "
+        "  background-color: #4CAF50; color: white; padding: 10px; border: "
+        "none; "
         "  width: 100%; cursor: pointer; }"
         "input[type=\"submit\"]:hover { background-color: #45a049; }"
         "</style>"
         "</head><body>"
         "<h2>WiFi Setup</h2>"
         "<form action=\"/connect\" method=\"POST\">"
-        "SSID: <input type=\"text\" name=\"ssid\" placeholder=\"Enter SSID\"><br>"
-        "Password: <input type=\"password\" name=\"password\" placeholder=\"Enter Password\"><br>"
+        "SSID: <input type=\"text\" name=\"ssid\" placeholder=\"Enter "
+        "SSID\"><br>"
+        "Password: <input type=\"password\" name=\"password\" "
+        "placeholder=\"Enter Password\"><br>"
         "<input type=\"submit\" value=\"Connect\">"
         "</form>"
         "</body></html>";
@@ -67,12 +72,14 @@ void handleConnect(IConfig& config, ILogging& logger) {
         config.set("wifi_ssid", ssid.c_str());
         config.set("wifi_password", pass.c_str());
         server.send(200, "text/html",
-                    "<html><body><h3>Connection successful. Restarting...</h3></body></html>");
+                    "<html><body><h3>Connection successful. "
+                    "Restarting...</h3></body></html>");
         delay(2000);
         ESP.restart();
     } else {
         logger.logln("Failed to connect.");
-        server.send(200, "text/html", "<html><body><h3>Connection failed</h3></body></html>");
+        server.send(200, "text/html",
+                    "<html><body><h3>Connection failed</h3></body></html>");
     }
 }
 
@@ -97,7 +104,8 @@ void start_captive_portal(IConfig& config, ILogging& logger) {
     // Serve the main page for all GET requests
     server.onNotFound([&logger]() {
         if (server.method() == HTTP_GET) {
-            logger.logln(("Redirecting " + server.uri() + " to root page").c_str());
+            logger.logln(
+                ("Redirecting " + server.uri() + " to root page").c_str());
             handleRoot();
         } else {
             logger.logln(("404 - Not Found: " + server.uri()).c_str());
@@ -106,7 +114,8 @@ void start_captive_portal(IConfig& config, ILogging& logger) {
     });
 
     // Only handle POST on /connect explicitly
-    server.on("/connect", HTTP_POST, [&config, &logger]() { handleConnect(config, logger); });
+    server.on("/connect", HTTP_POST,
+              [&config, &logger]() { handleConnect(config, logger); });
     server.begin();
     PORTAL_STATE = PORTAL_RUNNING;
 }
