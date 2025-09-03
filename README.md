@@ -84,6 +84,19 @@ See https://app.cirkitdesigner.com/project/fc8b766f-41c9-44f6-97f5-d1bfeb38f578
   toolchain)
 - [Python](https://python.org/) for pre-commit hooks
 
+### Dev-Container
+
+The project comes with a dev-container configuration for Visual Studio Code.
+This allows you to develop inside a container with all necessary dependencies
+pre-installed.
+
+If the PlatformIO integration fails, you can still build and run the project
+using the command line inside the dev-container (see below).
+
+It seems that having the PlatformIO extension installed on the host-machine can
+cause issues with the integration. If you encounter problems, try disabling the
+extension in your host environment and reloading the dev-container.
+
 ### Building and running
 
 This project uses PlatformIO environments defined in `platformio.ini`.
@@ -112,20 +125,14 @@ This project uses PlatformIO environments defined in `platformio.ini`.
   pio run -e posix
   ```
 
-- Run POSIX binary (PlatformIO "run" target):
-
-  ```
-  pio run -e posix -t run
-  ```
-
 - Clean build artifacts:
 
   ```
   # clean ESP32
-  pio run -e esp32-s3-devkitc --target clean
+  pio run -e esp32-s3-devkitc -t clean
 
   # clean POSIX
-  pio run -e posix --target clean
+  pio run -e posix -t clean
   ```
 
 - Static analysis / code check (PlatformIO):

@@ -1,0 +1,19 @@
+{
+    "name": "PlatformIO",
+    "dockerFile": "Dockerfile",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "platformio.platformio-ide"
+            ]
+        }
+    },
+    "mounts": [
+        "source=/dev,target=/dev,type=bind,consistency=cached"
+    ],
+    "privileged": true,
+    "runArgs": [
+        "--device-cgroup-rule=c 188:* rmw",
+        "--device-cgroup-rule=c 166:* rmw"
+    ]
+}
