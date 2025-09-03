@@ -84,18 +84,17 @@ void request_config(IConfig &config) {
     config.set("wifi_password", password.c_str());
 }
 
-void PosixConfig::get(const char *key, char *out_value, size_t out_size) {
-    if (!key || !out_value || out_size == 0) {
-        return;
+std::string PosixConfig::get(const char *key) {
+    if (!key) {
+        return std::string();
     }
     load_config();
     std::lock_guard<std::mutex> lk(g_mutex);
     auto it = g_config.find(key);
     if (it == g_config.end()) {
-        return;
+        return std::string();
     }
-    strncpy(out_value, it->second.c_str(), out_size);
-    out_value[out_size - 1] = '\0';  // Ensure null-termination
+    return it->second;
 }
 
 void PosixConfig::set(const char *key, const char *value) {

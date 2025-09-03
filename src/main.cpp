@@ -32,17 +32,15 @@ void setup() {
     logging.setup();
     audio.setup();
     ui.setup();
-    char ssid[256];
-    char password[256];
-    config.get("wifi_ssid", ssid, sizeof(ssid));
-    config.get("wifi_password", password, sizeof(password));
-    if (strcmp(ssid, "") == 0 || strcmp(password, "") == 0) {
+    std::string ssid = config.get("wifi_ssid");
+    std::string password = config.get("wifi_password");
+    if (ssid.empty() || password.empty()) {
         appState = APP_REQUESTING_CONFIG;
         return;
     } else {
         appState = APP_RUNNING;
     }
-    wifi.setup(ssid, password);
+    wifi.setup(ssid.c_str(), password.c_str());
 }
 
 void loop() {

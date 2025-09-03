@@ -27,19 +27,32 @@ bool _has_config() {
     return (err == ESP_OK);
 }
 
-void Esp32Config::get(const char *key, char *out_value, size_t out_size) {
+std::string Esp32Config::get(const char *key) {
+    if (!key) {
+        return std::string();
+    }
     _init_nvs();
-    size_t required_size = out_size;
-    esp_err_t err = nvs_get_str(s_nvs_handle, key, out_value, &required_size);
-    if (err != ESP_OK) {
+    // First call to get required size
+    size_t required_size = 0;
+    esp_err_t err = nvs_get_str(s_nvs_handle, key, nullptr, &required_size);
+    if (err != ESP_OK || required_size == 0) {
         logger.logln("Error reading value");
         logger.log("Key ");
         logger.logln(key);
         logger.logln(" not found, returning default.");
-        if (out_size > 0) {
-            out_value[0] = '\0';  // Ensure the output is an empty string
-        }
+        return std::string();
     }
+    std::string value;
+    value.resize(required_size);
+    err = nvs_get_str(s_nvs_handle, key, &value[0], &required_size);
+    if (err != ESP_OK) {
+        logger.logln("Error reading value after allocating buffer");
+        return std::string();
+    }
+    // nvs_get_str writes the null terminator; shrink to actual length
+    if (!value.empty() && value.back() == '\0')
+        value.pop_back();
+    return value;
 }
 
 void Esp32Config::set(const char *key, const char *value) {
