@@ -49,7 +49,7 @@ void setup() {
         std::string url;
         switch (event) {
         case EVENT_RESET_BUTTON_PRESSED:
-            logging.debug("Reset button prersed event received");
+            logging.debug("Reset button pressed event received");
             config.clear();
             ui.setState(IUserInterface::LedState::Reset);
             break;
