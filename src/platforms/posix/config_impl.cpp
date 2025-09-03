@@ -10,9 +10,6 @@
 #include <sstream>
 #include <string>
 
-// Simple, zero-dependency key=value config for POSIX.
-// Stores per-user config in $HOME/.noise-goblin.conf
-
 static std::string config_path() {
     const char *home = std::getenv("HOME");
     if (!home)
