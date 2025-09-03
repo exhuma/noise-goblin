@@ -6,14 +6,18 @@
 #if defined(BUILD_ESP32)
     #include "platforms/esp32/audio_impl.hpp"
     #include "platforms/esp32/config_impl.hpp"
+    #include "platforms/esp32/event_loop_impl.hpp"
+    #include "platforms/esp32/library_impl.hpp"
     #include "platforms/esp32/logging_impl.hpp"
     #include "platforms/esp32/ui_impl.hpp"
     #include "platforms/esp32/wifi_impl.hpp"
+Esp32EventLoop eventLoop;
 Esp32Logging logging;
 Esp32Wifi wifi(logging);
 Esp32Audio audio(logging);
 Esp32Config config(logging);
-Esp32Ui ui(audio, config, logging);
+Esp32Ui ui(audio, config, logging, eventLoop);
+Esp32Library library(logging);
 #else
     #include "platforms/posix/audio_impl.hpp"
     #include "platforms/posix/config_impl.hpp"
