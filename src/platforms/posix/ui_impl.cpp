@@ -33,6 +33,26 @@ void PosixUi::setup() {
 }
 
 void PosixUi::tick() {
+    switch (ledState) {
+    default:
+        logger.info("LED State: Unknown");
+        break;
+    case LedState::Normal:
+        logger.info("LED State: Normal");
+        break;
+    case LedState::CaptivePortal:
+        logger.info("LED State: Captive Portal");
+        break;
+    case LedState::Reset:
+        logger.info("LED State: Reset");
+        break;
+    case LedState::Connecting:
+        logger.info("LED State: Connecting");
+        break;
+    case LedState::Off:
+        logger.info("LED State: Off");
+        break;
+    }
     setNonCanonicalMode();
     if (isKeyPressed()) {
         char c;
@@ -46,25 +66,6 @@ void PosixUi::tick() {
     restoreTerminalMode();
 }
 
-void PosixUi::displayConfigCleared() {
-    logger.info("!!! ---------------------");
-    logger.info("!!! Configuration cleared");
-    logger.info("!!! ---------------------");
-}
-
-void PosixUi::displayCaptivePortal() {
-    logger.info("!!! ---------------------");
-    logger.info("!!! Captive Portal Mode");
-    logger.info("!!! ---------------------");
-    isNormal = false;
-}
-
-void PosixUi::displayNormal() {
-    if (isNormal) {
-        return;
-    }
-    logger.info("!!! ---------------------");
-    logger.info("!!! Entering Normal Mode");
-    logger.info("!!! ---------------------");
-    isNormal = true;
+void PosixUi::setState(LedState state) {
+    ledState = state;
 }

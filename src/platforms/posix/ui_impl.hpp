@@ -11,18 +11,16 @@ struct PosixUi : IUserInterface {
           audio(audio),
           config(config),
           eventLoop(eventLoop),
-          isNormal(true) {
+          ledState(LedState::Normal) {
     }
     void setup() override;
     void tick() override;
-    void displayConfigCleared() override;
-    void displayCaptivePortal() override;
-    void displayNormal() override;
+    void setState(LedState state) override;
 
   private:
     ILogging& logger;
     IAudio& audio;
     IConfig& config;
     IEventLoop& eventLoop;
-    bool isNormal;
+    LedState ledState;
 };
