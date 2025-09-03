@@ -44,7 +44,7 @@ See https://app.cirkitdesigner.com/project/fc8b766f-41c9-44f6-97f5-d1bfeb38f578
 
 #### Hardware
 
-- Battery Pack
+- no changes
 
 #### Code
 
@@ -52,10 +52,11 @@ See https://app.cirkitdesigner.com/project/fc8b766f-41c9-44f6-97f5-d1bfeb38f578
 - Provide a configuration option for the sound-byte list
 - Replace hard-coded list with the dynamic online result
 
-### 🔜 Milestone 4: Cleanup
+### 🔜 Milestone 4: Case & Portability
 
 #### Hardware
 
+- Battery Pack
 - Get a big fat button
 - Case
 
