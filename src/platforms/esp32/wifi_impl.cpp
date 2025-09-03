@@ -8,6 +8,10 @@ void Esp32Wifi::setup() {
 }
 
 void Esp32Wifi::connect(const char *ssid, const char *password) {
+    if (isConnecting || isConnected()) {
+        logger.info("Already connected or connecting to WiFi");
+        return;
+    }
     logger.info("Connecting to WiFi: ", ssid);
     WiFi.begin(ssid, password);
     isConnecting = true;
@@ -24,6 +28,7 @@ void Esp32Wifi::tick() {
             logger.error("Wifi Connection Failed");
             isConnecting = false;
         }
+        logger.info("Connected with IP: %s", WiFi.localIP().toString().c_str());
         return;
     }
 }

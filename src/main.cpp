@@ -81,6 +81,8 @@ void loop() {
     case APP_NO_NETWORK:
         logging.debug("App state: APP_NO_NETWORK");
         wifi.tick();
+        wifi.connect(config.get(WIFI_SSID_KEY).c_str(),
+                     config.get(WIFI_PASSWORD_KEY).c_str());
         break;
     case APP_RUNNING:
         logging.debug("App state: APP_RUNNING");
