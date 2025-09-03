@@ -16,6 +16,8 @@
     "files.associations": {
         "*.h": "c",
         "*.cpp": "cpp",
-        "*.hpp": "cpp"
+        "*.hpp": "cpp",
+        "iostream": "cpp",
+        "cstdlib": "cpp"
     }
 }

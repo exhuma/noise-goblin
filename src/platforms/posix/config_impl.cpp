@@ -1,5 +1,5 @@
-#include "../config.h"
-#include "../logging.h"
+#include "config_impl.hpp"
+#include "../logging.hpp"
 
 #include <cstdlib>
 #include <cstring>
@@ -59,12 +59,12 @@ static void load_config() {
     g_loaded = true;
 }
 
-static bool save_config() {
+static bool save_config(ILogging &logger) {
     std::lock_guard<std::mutex> lk(g_mutex);
     std::ofstream f(config_path());
     if (!f) {
-        log("Failed to open config file for writing: ");
-        logln(config_path().c_str());
+        logger.log("Failed to open config file for writing: ");
+        logger.logln(config_path().c_str());
         return false;
     }
     for (const auto &p : g_config) {
@@ -73,7 +73,18 @@ static bool save_config() {
     return true;
 }
 
-void get_config_value(const char *key, char *out_value, size_t out_size) {
+void request_config(IConfig &config) {
+    std::string ssid;
+    std::string password;
+    std::cout << "Enter WiFi SSID: ";
+    std::getline(std::cin, ssid);
+    std::cout << "Enter WiFi Password: ";
+    std::getline(std::cin, password);
+    config.set("wifi_ssid", ssid.c_str());
+    config.set("wifi_password", password.c_str());
+}
+
+void PosixConfig::get(const char *key, char *out_value, size_t out_size) {
     if (!key || !out_value || out_size == 0) {
         return;
     }
@@ -87,9 +98,9 @@ void get_config_value(const char *key, char *out_value, size_t out_size) {
     out_value[out_size - 1] = '\0';  // Ensure null-termination
 }
 
-const void *set_config_value(const char *key, const char *value) {
+void PosixConfig::set(const char *key, const char *value) {
     if (!key)
-        return nullptr;
+        return;
     load_config();
     {
         std::lock_guard<std::mutex> lk(g_mutex);
@@ -98,29 +109,17 @@ const void *set_config_value(const char *key, const char *value) {
         else
             g_config.erase(key);
     }
-    save_config();
-    return nullptr;
+    save_config(logger);
 }
 
-void request_config() {
-    std::string ssid;
-    std::string password;
-    std::cout << "Enter WiFi SSID: ";
-    std::getline(std::cin, ssid);
-    std::cout << "Enter WiFi Password: ";
-    std::getline(std::cin, password);
-    set_config_value("wifi_ssid", ssid.c_str());
-    set_config_value("wifi_password", password.c_str());
-}
-
-bool config_tick() {
-    request_config();  // <- blocking
+bool PosixConfig::tick() {
+    request_config(*this);  // <- blocking
     return true;
 }
 
-void clear_config_values() {
+void PosixConfig::clear() {
     std::lock_guard<std::mutex> lk(g_mutex);
     g_config.clear();
-    save_config();
-    logln("Configuration cleared.");
+    save_config(logger);
+    logger.logln("Configuration cleared.");
 }

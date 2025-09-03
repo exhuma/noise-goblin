@@ -1,43 +1,62 @@
 #include <cstdio>
 #include <cstring>
-#include "config.h"
-#include "platforms/audio.h"
-#include "platforms/config.h"
-#include "platforms/logging.h"
-#include "platforms/ui.h"
-#include "platforms/wifi.h"
+
+#if defined(BUILD_ESP32)
+    #include "platforms/esp32/audio_impl.hpp"
+    #include "platforms/esp32/config_impl.hpp"
+    #include "platforms/esp32/logging_impl.hpp"
+    #include "platforms/esp32/ui_impl.hpp"
+    #include "platforms/esp32/wifi_impl.hpp"
+Esp32Logging logging;
+Esp32Wifi wifi(logging);
+Esp32Audio audio(logging);
+Esp32Config config(logging);
+Esp32Ui ui(audio, config, logging);
+#else
+    #include "platforms/posix/audio_impl.hpp"
+    #include "platforms/posix/config_impl.hpp"
+    #include "platforms/posix/logging_impl.hpp"
+    #include "platforms/posix/ui_impl.hpp"
+    #include "platforms/posix/wifi_impl.hpp"
+PosixLogging logging;
+PosixWifi wifi(logging);
+PosixAudio audio(logging);
+PosixConfig config(logging);
+PosixUi ui(audio, config, logging);
+#endif
 
 enum AppState { APP_REQUESTING_CONFIG, APP_RUNNING };
 AppState appState = APP_REQUESTING_CONFIG;
 
 void setup() {
-    setup_logging();
-    setup_audio();
-    setup_ui();
+    logging.setup();
+    audio.setup();
+    ui.setup();
     char ssid[256];
     char password[256];
-    get_config_value("wifi_ssid", ssid, sizeof(ssid));
-    get_config_value("wifi_password", password, sizeof(password));
+    config.get("wifi_ssid", ssid, sizeof(ssid));
+    config.get("wifi_password", password, sizeof(password));
     if (strcmp(ssid, "") == 0 || strcmp(password, "") == 0) {
         appState = APP_REQUESTING_CONFIG;
         return;
     } else {
         appState = APP_RUNNING;
     }
-    connect_wifi(ssid, password);
+    wifi.setup(ssid, password);
 }
 
 void loop() {
     switch (appState) {
     case APP_REQUESTING_CONFIG:
     default:
-        if (config_tick()) {
+        if (config.tick()) {
             appState = APP_RUNNING;
         }
         break;
     case APP_RUNNING:
-        audio_tick();
-        ui_tick();
+        audio.tick();
+        ui.tick();
+        wifi.tick();
         break;
     }
 }
