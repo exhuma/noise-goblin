@@ -17,14 +17,16 @@ Esp32Ui ui(audio, config, logging);
 #else
     #include "platforms/posix/audio_impl.hpp"
     #include "platforms/posix/config_impl.hpp"
+    #include "platforms/posix/event_loop_impl.hpp"
     #include "platforms/posix/logging_impl.hpp"
     #include "platforms/posix/ui_impl.hpp"
     #include "platforms/posix/wifi_impl.hpp"
+PosixEventLoop eventLoop;
 PosixLogging logging;
 PosixWifi wifi(logging);
 PosixAudio audio(logging);
 PosixConfig config(logging);
-PosixUi ui(audio, config, logging);
+PosixUi ui(audio, config, logging, eventLoop);
 #endif
 
 // Instantiate the application with the active config implementation
@@ -34,6 +36,7 @@ void setup() {
     audio.setup();
     ui.setup();
     wifi.setup();
+    eventLoop.setup();
     appState = app.getState();
     logging.info("----- Setup Done --------------");
 }

@@ -4,6 +4,7 @@
 
 #include "app.hpp"
 #include <string>
+#include "platforms/eventLoop.hpp"
 
 AppState appState = APP_UNINITIALISED;
 
@@ -28,4 +29,8 @@ AppState Application::getState() {
     } else {
         return APP_RUNNING;
     }
+}
+
+void Application::handleEvent(int event) {
+    logger.info("Handling event: %s", std::to_string(event));
 }
