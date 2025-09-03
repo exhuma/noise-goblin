@@ -127,6 +127,6 @@ void PosixUi::tick() {
     if (playButtonPressed) {
         logger.info("Play button pressed");
         int randomIndex = rand() % 100;
-        logger.info("https://base-url/", soundByteNames[randomIndex]);
+        logger.info("https://base-url/%s", soundByteNames[randomIndex]);
     }
 }

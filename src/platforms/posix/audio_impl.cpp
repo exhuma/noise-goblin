@@ -8,7 +8,7 @@ void PosixAudio::setup() {
 }
 
 void PosixAudio::play(const char *url) {
-    logger.info("PosixAudio play called with url: ", url);
+    logger.info("PosixAudio play called with url: %s", url);
 }
 
 void PosixAudio::tick() {

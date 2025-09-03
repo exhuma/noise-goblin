@@ -55,7 +55,7 @@ void handleConnect(IConfig& config, ILogging& logger) {
     String ssid = server.arg("ssid");
     String pass = server.arg("password");
 
-    logger.info("Trying to connect to SSID: ", ssid);
+    logger.info("Trying to connect to SSID: %s", ssid);
     WiFi.begin(ssid.c_str(), pass.c_str());
 
     // Attempt connection for a few seconds
@@ -68,7 +68,7 @@ void handleConnect(IConfig& config, ILogging& logger) {
 
     if (WiFi.status() == WL_CONNECTED) {
         logger.info("Connected!");
-        logger.info("IP address: ", WiFi.localIP().toString());
+        logger.info("IP address: %s", WiFi.localIP());
         config.set(WIFI_SSID_KEY, ssid.c_str());
         config.set(WIFI_PASSWORD_KEY, pass.c_str());
         server.send(200, "text/html",
@@ -93,9 +93,9 @@ void start_captive_portal(IConfig& config, ILogging& logger) {
 
     IPAddress myIP = WiFi.softAPIP();
     logger.info("Captive portal started");
-    logger.info("Connect your phone to WiFi: ", apSSID);
-    logger.info("Password: ", apPassword);
-    logger.info("Then open: http://", myIP.toString());
+    logger.info("Connect your phone to WiFi: %s", apSSID);
+    logger.info("Password: %s", apPassword);
+    logger.info("Then open: http://%s", myIP);
 
     // DNS server to redirect all queries to our ESP
     dnsServer.start(DNS_PORT, "*", myIP);
@@ -107,7 +107,7 @@ void start_captive_portal(IConfig& config, ILogging& logger) {
             logger.debug("Redirecting ", server.uri(), " to root page");
             handleRoot();
         } else {
-            logger.info("404 - Not Found: ", server.uri());
+            logger.info("404 - Not Found: %s", server.uri());
             server.send(404, "text/plain", "Not found");
         }
     });
