@@ -30,7 +30,3 @@ AppState Application::getState() {
         return APP_RUNNING;
     }
 }
-
-void Application::handleEvent(int event) {
-    logger.info("Handling event: %s", std::to_string(event));
-}

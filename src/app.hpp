@@ -19,7 +19,6 @@ class Application {
     void setup();
     void loop();
     AppState getState();
-    void handleEvent(int event);
 
   private:
     IConfig &config;

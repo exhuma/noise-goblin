@@ -6,13 +6,7 @@ PosixEventLoop::~PosixEventLoop() {
 }
 
 void PosixEventLoop::setup() {
-    setEventCallback([](int event) {
-        // Handle the event (e.g., simulate button press)
-        std::cout << "Event received: " << event << std::endl;
-    });
     start();
-    // Ensure the event loop is stopped properly
-    // std::atexit([&eventLoop]() { eventLoop.stop(); });
 }
 
 void PosixEventLoop::start() {

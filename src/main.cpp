@@ -38,6 +38,21 @@ void setup() {
     wifi.setup();
     eventLoop.setup();
     appState = app.getState();
+    eventLoop.setEventCallback([&](int event) {
+        switch (event) {
+        case EVENT_RESET_BUTTON_PRESSED:
+            logging.debug("Reset button prersed event received");
+            config.clear();
+            break;
+        case EVENT_PLAY_BUTTON_PRESSED:
+            logging.debug("Play button pressed event received");
+            audio.play("https://base-url/sound1.wav");
+            break;
+        default:
+            logging.error("Unknown event received: %d", event);
+            break;
+        }
+    });
     logging.info("----- Setup Done --------------");
 }
 
