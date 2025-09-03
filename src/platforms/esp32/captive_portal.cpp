@@ -69,8 +69,8 @@ void handleConnect(IConfig& config, ILogging& logger) {
     if (WiFi.status() == WL_CONNECTED) {
         logger.info("Connected!");
         logger.info("IP address: ", WiFi.localIP().toString());
-        config.set("wifi_ssid", ssid.c_str());
-        config.set("wifi_password", pass.c_str());
+        config.set(WIFI_SSID_KEY, ssid.c_str());
+        config.set(WIFI_PASSWORD_KEY, pass.c_str());
         server.send(200, "text/html",
                     "<html><body><h3>Connection successful. "
                     "Restarting...</h3></body></html>");

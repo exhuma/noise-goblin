@@ -3,6 +3,9 @@
 #include <cstddef>
 #include <string>
 
+inline const char *WIFI_SSID_KEY = "wifi_ssid";
+inline const char *WIFI_PASSWORD_KEY = "wifi_password";
+
 struct IConfig {
     virtual ~IConfig() = default;
     virtual std::string get(const char *key) = 0;

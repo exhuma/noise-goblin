@@ -23,7 +23,7 @@ void _init_nvs() {
 
 bool _has_config() {
     _init_nvs();
-    esp_err_t err = nvs_get_str(s_nvs_handle, "wifi_ssid", nullptr, nullptr);
+    esp_err_t err = nvs_get_str(s_nvs_handle, WIFI_SSID_KEY, nullptr, nullptr);
     return (err == ESP_OK);
 }
 

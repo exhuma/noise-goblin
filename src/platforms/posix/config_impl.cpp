@@ -79,8 +79,8 @@ void request_config(IConfig &config) {
     std::getline(std::cin, ssid);
     std::cout << "Enter WiFi Password: ";
     std::getline(std::cin, password);
-    config.set("wifi_ssid", ssid.c_str());
-    config.set("wifi_password", password.c_str());
+    config.set(WIFI_SSID_KEY, ssid.c_str());
+    config.set(WIFI_PASSWORD_KEY, password.c_str());
 }
 
 std::string PosixConfig::get(const char *key) {
