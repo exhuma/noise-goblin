@@ -63,8 +63,7 @@ static bool save_config(ILogging &logger) {
     std::lock_guard<std::mutex> lk(g_mutex);
     std::ofstream f(config_path());
     if (!f) {
-        logger.log("Failed to open config file for writing: ");
-        logger.logln(config_path().c_str());
+        logger.error("Failed to open config file for writing: ", config_path());
         return false;
     }
     for (const auto &p : g_config) {
@@ -120,5 +119,5 @@ void PosixConfig::clear() {
     std::lock_guard<std::mutex> lk(g_mutex);
     g_config.clear();
     save_config(logger);
-    logger.logln("Configuration cleared.");
+    logger.info("Configuration cleared.");
 }

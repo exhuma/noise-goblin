@@ -36,17 +36,15 @@ std::string Esp32Config::get(const char *key) {
     size_t required_size = 0;
     esp_err_t err = nvs_get_str(s_nvs_handle, key, nullptr, &required_size);
     if (err != ESP_OK || required_size == 0) {
-        logger.logln("Error reading value");
-        logger.log("Key ");
-        logger.logln(key);
-        logger.logln(" not found, returning default.");
+        logger.error("Error reading key: ", key,
+                     " not found, returning default.");
         return std::string();
     }
     std::string value;
     value.resize(required_size);
     err = nvs_get_str(s_nvs_handle, key, &value[0], &required_size);
     if (err != ESP_OK) {
-        logger.logln("Error reading value after allocating buffer");
+        logger.error("Error reading value after allocating buffer");
         return std::string();
     }
     // nvs_get_str writes the null terminator; shrink to actual length
@@ -57,10 +55,8 @@ std::string Esp32Config::get(const char *key) {
 
 void Esp32Config::set(const char *key, const char *value) {
     _init_nvs();
-    logger.log("set_config_value called with key: ");
-    logger.logln(key);
-    logger.log("and value: ");
-    logger.logln(value);
+    logger.debug("set_config_value called with key: ", key,
+                 "and value: ", value);
     esp_err_t err = nvs_set_str(s_nvs_handle, key, value);
     nvs_commit(s_nvs_handle);
 }
@@ -78,5 +74,5 @@ void Esp32Config::clear() {
     _init_nvs();
     nvs_erase_all(s_nvs_handle);
     nvs_commit(s_nvs_handle);
-    logger.logln("Configuration cleared.");
+    logger.info("Configuration cleared.");
 }

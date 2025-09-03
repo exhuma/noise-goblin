@@ -3,15 +3,14 @@
 #include <unistd.h>
 
 void PosixAudio::setup() {
-    logger.logln("PosixAudio setup called");
+    logger.info("PosixAudio setup called");
 }
 
 void PosixAudio::play(const char *url) {
-    logger.log("PosixAudio play called with url: ");
-    logger.logln(url);
+    logger.info("PosixAudio play called with url: ", url);
 }
 
 void PosixAudio::tick() {
-    logger.logln("PosixAudio tick called");
+    logger.info("PosixAudio tick called");
     sleep(1);
 }

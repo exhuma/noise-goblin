@@ -158,7 +158,7 @@ void Esp32Ui::tick() {
         _blink_strip();
     }
     if (digitalRead(PLAY_BUTTON) == LOW) {
-        logger.logln("Play button pressed");
+        logger.info("Play button pressed");
         struct timeval tv;
         gettimeofday(&tv, nullptr);
         randomSeed(

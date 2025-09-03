@@ -12,9 +12,9 @@ void Esp32Audio::setup() {
 }
 
 void Esp32Audio::play(const char* url) {
-    logger.logln("Connecting to audio stream");
+    logger.debug("Connecting to audio stream");
     if (!esp32_audio.connecttohost(url)) {
-        logger.logln("Failed to connect to host");
+        logger.error("Failed to connect to host");
     }
 }
 

@@ -1,7 +1,9 @@
 #include "../logging.hpp"
 
 struct Esp32Logging : ILogging {
-    void log(const char *msg) override;
-    void logln(const char *msg) override;
     void setup() override;
+
+    void debug(const char *fmt, ...) override;
+    void info(const char *fmt, ...) override;
+    void error(const char *fmt, ...) override;
 };

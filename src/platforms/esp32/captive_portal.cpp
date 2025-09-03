@@ -55,20 +55,20 @@ void handleConnect(IConfig& config, ILogging& logger) {
     String ssid = server.arg("ssid");
     String pass = server.arg("password");
 
-    logger.logln(("Trying to connect to SSID: " + ssid).c_str());
+    logger.info("Trying to connect to SSID: ", ssid);
     WiFi.begin(ssid.c_str(), pass.c_str());
 
     // Attempt connection for a few seconds
     int retries = 0;
     while (WiFi.status() != WL_CONNECTED && retries < 20) {
         delay(500);
-        logger.logln(".");
+        logger.debug(".");
         retries++;
     }
 
     if (WiFi.status() == WL_CONNECTED) {
-        logger.logln("Connected!");
-        logger.logln(("IP address: " + WiFi.localIP().toString()).c_str());
+        logger.info("Connected!");
+        logger.info("IP address: ", WiFi.localIP().toString());
         config.set("wifi_ssid", ssid.c_str());
         config.set("wifi_password", pass.c_str());
         server.send(200, "text/html",
@@ -77,7 +77,7 @@ void handleConnect(IConfig& config, ILogging& logger) {
         delay(2000);
         ESP.restart();
     } else {
-        logger.logln("Failed to connect.");
+        logger.error("Failed to connect.");
         server.send(200, "text/html",
                     "<html><body><h3>Connection failed</h3></body></html>");
     }
@@ -92,10 +92,10 @@ void start_captive_portal(IConfig& config, ILogging& logger) {
     WiFi.softAP(apSSID, apPassword);
 
     IPAddress myIP = WiFi.softAPIP();
-    logger.logln("Captive portal started");
-    logger.logln(("Connect your phone to WiFi: " + String(apSSID)).c_str());
-    logger.logln(("Password: " + String(apPassword)).c_str());
-    logger.logln(("Then open: http://" + myIP.toString()).c_str());
+    logger.info("Captive portal started");
+    logger.info("Connect your phone to WiFi: ", apSSID);
+    logger.info("Password: ", apPassword);
+    logger.info("Then open: http://", myIP.toString());
 
     // DNS server to redirect all queries to our ESP
     dnsServer.start(DNS_PORT, "*", myIP);
@@ -104,11 +104,10 @@ void start_captive_portal(IConfig& config, ILogging& logger) {
     // Serve the main page for all GET requests
     server.onNotFound([&logger]() {
         if (server.method() == HTTP_GET) {
-            logger.logln(
-                ("Redirecting " + server.uri() + " to root page").c_str());
+            logger.debug("Redirecting ", server.uri(), " to root page");
             handleRoot();
         } else {
-            logger.logln(("404 - Not Found: " + server.uri()).c_str());
+            logger.info("404 - Not Found: ", server.uri());
             server.send(404, "text/plain", "Not found");
         }
     });

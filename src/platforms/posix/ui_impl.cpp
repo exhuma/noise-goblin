@@ -108,11 +108,11 @@ const char* soundByteNames[100] = {
  * Blink the RGB LED several times in red without blocking
  */
 void _blink_strip(ILogging& logger) {
-    logger.logln("Blinking strip");
+    logger.info("Blinking strip");
 }
 
 void PosixUi::setup() {
-    logger.logln("Posix UI setup complete");
+    logger.info("Posix UI setup complete");
 }
 
 void PosixUi::tick() {
@@ -124,10 +124,8 @@ void PosixUi::tick() {
         _blink_strip(logger);
     }
     if (playButtonPressed) {
-        logger.logln("Play button pressed");
+        logger.info("Play button pressed");
         int randomIndex = rand() % 100;
-        logger.logln(
-            (std::string("https://base-url/") + soundByteNames[randomIndex])
-                .c_str());
+        logger.info("https://base-url/", soundByteNames[randomIndex]);
     }
 }
