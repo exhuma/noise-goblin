@@ -148,6 +148,7 @@ void Esp32Ui::setup() {
     strip.show();
     strip.setBrightness(50);
     randomSeed(analogRead(0));  // Seed the random number generator
+    logger.debug("UI Setup complete");
 }
 
 void Esp32Ui::tick() {

@@ -23,7 +23,7 @@ void PosixLogging::debug(const char *fmt, ...) {
 void PosixLogging::info(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    std::cout << "[" << timestamp() << "] [INFO] ";
+    std::cout << "[" << timestamp() << "] [INFO ] ";
     vfprintf(stdout, fmt, args);
     std::cout << std::endl;
     va_end(args);
@@ -39,5 +39,5 @@ void PosixLogging::error(const char *fmt, ...) {
 }
 
 void PosixLogging::setup() {
-    // No setup required for Posix
+    debug("Logging setup complete");
 }

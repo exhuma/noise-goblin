@@ -9,6 +9,7 @@ void Esp32Audio::setup() {
                           15   // I2S_DOUT
     );
     esp32_audio.setVolume(20);
+    logger.debug("Audio Setup complete");
 }
 
 void Esp32Audio::play(const char* url) {

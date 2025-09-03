@@ -113,6 +113,7 @@ void _blink_strip(ILogging& logger) {
 
 void PosixUi::setup() {
     logger.info("Posix UI setup complete");
+    logger.debug("UI Setup complete");
 }
 
 void PosixUi::tick() {

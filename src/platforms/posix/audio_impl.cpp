@@ -4,6 +4,7 @@
 
 void PosixAudio::setup() {
     logger.info("PosixAudio setup called");
+    logger.debug("Audio Setup complete");
 }
 
 void PosixAudio::play(const char *url) {
