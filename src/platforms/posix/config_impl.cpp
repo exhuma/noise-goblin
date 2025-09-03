@@ -57,7 +57,7 @@ static void load_config() {
 }
 
 static bool save_config(ILogging &logger) {
-    std::lock_guard<std::mutex> lk(g_mutex);
+    // Assume caller holds the lock; do not lock here
     std::ofstream f(config_path());
     if (!f) {
         logger.error("Failed to open config file for writing: ", config_path());
