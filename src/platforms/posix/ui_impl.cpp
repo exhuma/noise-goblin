@@ -160,3 +160,20 @@ void PosixUi::displayConfigCleared() {
     logger.info("!!! Configuration cleared");
     logger.info("!!! ---------------------");
 }
+
+void PosixUi::displayCaptivePortal() {
+    logger.info("!!! ---------------------");
+    logger.info("!!! Captive Portal Mode");
+    logger.info("!!! ---------------------");
+    isNormal = false;
+}
+
+void PosixUi::displayNormal() {
+    if (isNormal) {
+        return;
+    }
+    logger.info("!!! ---------------------");
+    logger.info("!!! Entering Normal Mode");
+    logger.info("!!! ---------------------");
+    isNormal = true;
+}

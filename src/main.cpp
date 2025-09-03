@@ -65,6 +65,7 @@ void loop() {
     case APP_UNINITIALISED:
     default:
         logging.debug("App state: APP_UNINITIALISED");
+        ui.displayCaptivePortal();
         config.tick();
         break;
     case APP_NO_NETWORK:
@@ -73,6 +74,7 @@ void loop() {
         break;
     case APP_RUNNING:
         logging.debug("App state: APP_RUNNING");
+        ui.displayNormal();
         audio.tick();
         wifi.tick();
         break;
