@@ -8,7 +8,7 @@ void Esp32Logging::debug(const char *fmt, ...) {
     vsnprintf(msg, sizeof(msg), fmt, args);
     va_end(args);
     Serial.print("[DEBUG] ");
-    Serial.print(msg);
+    Serial.println(msg);
 }
 
 void Esp32Logging::info(const char *fmt, ...) {
@@ -18,7 +18,7 @@ void Esp32Logging::info(const char *fmt, ...) {
     vsnprintf(msg, sizeof(msg), fmt, args);
     va_end(args);
     Serial.print("[INFO ] ");
-    Serial.print(msg);
+    Serial.println(msg);
 }
 
 void Esp32Logging::error(const char *fmt, ...) {
@@ -28,7 +28,7 @@ void Esp32Logging::error(const char *fmt, ...) {
     vsnprintf(msg, sizeof(msg), fmt, args);
     va_end(args);
     Serial.print("[ERROR] ");
-    Serial.print(msg);
+    Serial.println(msg);
 }
 
 void Esp32Logging::setup() {
