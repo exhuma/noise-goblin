@@ -62,5 +62,4 @@ dkms.conf
 .vscode/launch.json
 
 # Project
-src/config.h
 .noise-goblin.conf

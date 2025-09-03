@@ -1,7 +1,6 @@
 #include <cstdio>
 #include <cstring>
 #include "audio_loop.hpp"
-#include "config.h"
 #include "config_loop.hpp"
 #include "logging.hpp"
 #include "ui_loop.hpp"
