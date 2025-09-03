@@ -84,6 +84,56 @@ See https://app.cirkitdesigner.com/project/fc8b766f-41c9-44f6-97f5-d1bfeb38f578
   toolchain)
 - [Python](https://python.org/) for pre-commit hooks
 
+### Building and running
+
+This project uses PlatformIO environments defined in `platformio.ini`.
+
+- Build for ESP32:
+
+  ```
+  pio run -e esp32-s3-devkitc
+  ```
+
+- Upload to ESP32:
+
+  ```
+  pio run -e esp32-s3-devkitc --target upload
+  ```
+
+- Open serial monitor for ESP32:
+
+  ```
+  pio device monitor -e esp32-s3-devkitc
+  ```
+
+- Build POSIX (local test binary):
+
+  ```
+  pio run -e posix
+  ```
+
+- Run POSIX binary (PlatformIO "run" target):
+
+  ```
+  pio run -e posix -t run
+  ```
+
+- Clean build artifacts:
+
+  ```
+  # clean ESP32
+  pio run -e esp32-s3-devkitc --target clean
+
+  # clean POSIX
+  pio run -e posix --target clean
+  ```
+
+- Static analysis / code check (PlatformIO):
+
+  ```
+  pio check -e esp32-s3-devkitc
+  ```
+
 ## Platform Support
 
 - **ESP32**: IoT and embedded applications
