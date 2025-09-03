@@ -1,4 +1,6 @@
 #include "audio_impl.hpp"
+#include <mutex>
+#include <string>
 #include "Audio.h"
 
 Audio esp32_audio;
@@ -12,13 +14,23 @@ void Esp32Audio::setup() {
     logger.debug("Audio Setup complete");
 }
 
-void Esp32Audio::play(const char* url) {
-    logger.debug("Connecting to audio stream");
-    if (!esp32_audio.connecttohost(url)) {
-        logger.error("Failed to connect to host");
+void Esp32Audio::play(std::string url) {
+    esp32_audio.stopSong();
+    logger.debug("Playing %s", url.c_str());
+    {
+        currentUrl = url;
+        logger.debug("Set current URL to: %s -> %s", url.c_str(),
+                     currentUrl.c_str());
     }
 }
 
 void Esp32Audio::tick() {
+    if (!currentUrl.empty()) {
+        const bool success = esp32_audio.connecttohost(currentUrl.c_str());
+        currentUrl.clear();
+        if (!success) {
+            logger.error("Failed to connect to host");
+        }
+    }
     esp32_audio.loop();
 }

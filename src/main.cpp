@@ -57,7 +57,7 @@ void setup() {
             logging.debug("Play button pressed event received");
             randomSound = library.getRandomSound();
             url = "https://base-url/" + randomSound + ".mp3";
-            audio.play(url.c_str());
+            audio.play(url);
             break;
         default:
             logging.error("Unknown event received: %d", event);
