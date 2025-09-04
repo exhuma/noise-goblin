@@ -17,7 +17,7 @@ from this online collection and play it.
 
 See https://app.cirkitdesigner.com/project/fc8b766f-41c9-44f6-97f5-d1bfeb38f578
 
-![Wiring](docs/images/prototype-2.jpg)
+![Wiring](docs/diagrams/NoiseGoblin_bb.png)
 
 ## Project Plan
 
