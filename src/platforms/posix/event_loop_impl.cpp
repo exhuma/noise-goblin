@@ -2,7 +2,13 @@
 #include <iostream>
 
 PosixEventLoop::~PosixEventLoop() {
-    stop();
+    if (running) {
+        running = false;
+        eventCondition.notify_all();
+        if (eventThread.joinable()) {
+            eventThread.join();
+        }
+    }
 }
 
 void PosixEventLoop::setup() {

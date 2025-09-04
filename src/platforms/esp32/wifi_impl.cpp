@@ -33,6 +33,6 @@ void Esp32Wifi::tick() {
     }
 }
 
-bool Esp32Wifi::isConnected() {
+auto Esp32Wifi::isConnected() -> bool {
     return WiFi.status() == WL_CONNECTED;
 }

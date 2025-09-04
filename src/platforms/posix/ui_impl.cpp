@@ -1,8 +1,8 @@
 #include "ui_impl.hpp"
 #include <fcntl.h>
-#include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#include <cstdlib>
 #include <string>
 
 void setNonCanonicalMode() {
@@ -12,12 +12,12 @@ void setNonCanonicalMode() {
     tcsetattr(STDIN_FILENO, TCSANOW, &t);
 }
 
-bool isKeyPressed() {
+auto isKeyPressed() -> bool {
     struct timeval tv = {0, 0};
     fd_set fds;
     FD_ZERO(&fds);
     FD_SET(STDIN_FILENO, &fds);
-    return select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv) > 0;
+    return select(STDIN_FILENO + 1, &fds, nullptr, nullptr, &tv) > 0;
 }
 
 void restoreTerminalMode() {

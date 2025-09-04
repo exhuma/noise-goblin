@@ -45,7 +45,7 @@ class Application {
     /// @details This looks at various subsystems and determines the current
     /// application state. Depending on state, the system changes behaviour.
     /// @return The current application state.
-    AppState computeState();
+    auto computeState() -> AppState;
 
   private:
     IConfig &config;

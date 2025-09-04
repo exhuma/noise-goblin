@@ -5,9 +5,9 @@ struct Esp32Config : IConfig {
     explicit Esp32Config(ILogging &logger) : logger(logger) {
     }
 
-    std::string get(const char *key) override;
+    auto get(const char *key) -> std::string override;
     void set(const char *key, const char *value) override;
-    bool tick() override;
+    auto tick() -> bool override;
     void clear() override;
 
   private:

@@ -21,15 +21,15 @@ void _init_nvs() {
     }
 }
 
-bool _has_config() {
+auto _has_config() -> bool {
     _init_nvs();
     esp_err_t err = nvs_get_str(s_nvs_handle, WIFI_SSID_KEY, nullptr, nullptr);
     return (err == ESP_OK);
 }
 
-std::string Esp32Config::get(const char *key) {
+auto Esp32Config::get(const char *key) -> std::string {
     if (!key) {
-        return std::string();
+        return {};
     }
     _init_nvs();
     // First call to get required size
@@ -38,14 +38,14 @@ std::string Esp32Config::get(const char *key) {
     if (err != ESP_OK || required_size == 0) {
         logger.error("Error reading key: ", key,
                      " not found, returning default.");
-        return std::string();
+        return {};
     }
     std::string value;
     value.resize(required_size);
     err = nvs_get_str(s_nvs_handle, key, &value[0], &required_size);
     if (err != ESP_OK) {
         logger.error("Error reading value after allocating buffer");
-        return std::string();
+        return {};
     }
     // nvs_get_str writes the null terminator; shrink to actual length
     if (!value.empty() && value.back() == '\0')
@@ -61,7 +61,7 @@ void Esp32Config::set(const char *key, const char *value) {
     nvs_commit(s_nvs_handle);
 }
 
-bool Esp32Config::tick() {
+auto Esp32Config::tick() -> bool {
     if (_has_config()) {
         return true;
     }

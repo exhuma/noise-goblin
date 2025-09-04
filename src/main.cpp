@@ -56,9 +56,9 @@ void loop() {
 }
 
 // Entry-point for POSIX platforms (ignored by ESP32)
-int main() {
+auto main() -> int {
     setup();
-    while (1) {
+    while (true) {
         loop();
     }
     return 0;

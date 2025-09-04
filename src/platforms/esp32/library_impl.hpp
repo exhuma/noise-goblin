@@ -6,7 +6,7 @@ struct Esp32Library : ILibrary {
     }
 
     void setup() override;
-    std::string getRandomSound() override;
+    auto getRandomSound() -> std::string override;
 
   private:
     ILogging& logger;

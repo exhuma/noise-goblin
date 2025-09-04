@@ -19,6 +19,9 @@ RUN apt-get update \
 # Install PlatformIO
 RUN python3 -m pip install -U platformio
 
+# Install Clang-Tidy
+RUN apt-get update && apt-get install -y clang-tidy && rm -rf /var/lib/apt/lists/*
+
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=dialog
 

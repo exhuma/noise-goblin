@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 
-static std::string config_path() {
+static auto config_path() -> std::string {
     const char *home = std::getenv("HOME");
     if (!home)
         home = ".";
@@ -21,11 +21,11 @@ static std::map<std::string, std::string> g_config;
 static bool g_loaded = false;
 static std::mutex g_mutex;
 
-static inline std::string trim(const std::string &s) {
+static inline auto trim(const std::string &s) -> std::string {
     const char *ws = " \t\r\n";
     auto b = s.find_first_not_of(ws);
     if (b == std::string::npos)
-        return std::string();
+        return {};
     auto e = s.find_last_not_of(ws);
     return s.substr(b, e - b + 1);
 }
@@ -56,11 +56,12 @@ static void load_config() {
     g_loaded = true;
 }
 
-static bool save_config(ILogging &logger) {
+static auto save_config(ILogging &logger) -> bool {
     // Assume caller holds the lock; do not lock here
     std::ofstream f(config_path());
     if (!f) {
-        logger.error("Failed to open config file for writing: ", config_path());
+        logger.error("Failed to open config file for writing: ",
+                     config_path().c_str());
         return false;
     }
     for (const auto &p : g_config) {
@@ -80,15 +81,15 @@ void request_config(IConfig &config) {
     config.set(WIFI_PASSWORD_KEY, password.c_str());
 }
 
-std::string PosixConfig::get(const char *key) {
+auto PosixConfig::get(const char *key) -> std::string {
     if (!key) {
-        return std::string();
+        return {};
     }
     load_config();
     std::lock_guard<std::mutex> lk(g_mutex);
     auto it = g_config.find(key);
     if (it == g_config.end()) {
-        return std::string();
+        return {};
     }
     return it->second;
 }
@@ -107,7 +108,7 @@ void PosixConfig::set(const char *key, const char *value) {
     save_config(logger);
 }
 
-bool PosixConfig::tick() {
+auto PosixConfig::tick() -> bool {
     request_config(*this);  // <- blocking
     return true;
 }

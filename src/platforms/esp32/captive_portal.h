@@ -1,3 +1,6 @@
+#include "../config.hpp"
+#include "../logging.hpp"
+
 /// @brief Start the captive portal.
 /// @param config The configuration object.
 /// @param logger The logging object.

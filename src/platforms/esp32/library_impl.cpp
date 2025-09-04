@@ -1,7 +1,8 @@
 #include "library_impl.hpp"
+#include <array>
 #include <string>
 
-const char* soundByteNames[100] = {
+const std::array<const char*, 100> soundByteNames = {
     "knockingonheavensdoor-godverdomme",
     "dp-and_so_begins_the_tale",
     "castlevania-intro",
@@ -107,7 +108,7 @@ void Esp32Library::setup() {
     logger.info("Library Setup");
 }
 
-std::string Esp32Library::getRandomSound() {
+auto Esp32Library::getRandomSound() -> std::string {
     logger.info("Getting random sound");
     srand(static_cast<unsigned int>(time(nullptr)));
     int index = rand() % 100;

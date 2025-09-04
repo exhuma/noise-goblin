@@ -21,7 +21,7 @@ struct IConfig {
     /// key.
     /// @param key The configuration key to retrieve the value for.
     /// @return The value associated with the specified key.
-    virtual std::string get(const char *key) = 0;
+    virtual auto get(const char *key) -> std::string = 0;
 
     /// @brief Sets the value for the specified configuration key.
     /// @param key The configuration key to set the value for.
@@ -30,8 +30,8 @@ struct IConfig {
 
     /// @brief Performs periodic configuration-related tasks or updates.
     /// @return True if we have configuration data available, False otherwise.
-    virtual bool tick() = 0;  // TODO: should return void. Use a better method
-                              // to retrieve the current state.
+    virtual auto tick() -> bool = 0;  // TODO: should return void. Use a better
+                                      // method to retrieve the current state.
 
     /// @brief Clears all configuration settings.
     virtual void clear() = 0;

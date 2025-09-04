@@ -7,7 +7,7 @@ struct Esp32Wifi : IWifi {
     void setup() override;
     void connect(const char* ssid, const char* password) override;
     void tick() override;
-    bool isConnected() override;
+    auto isConnected() -> bool override;
 
   private:
     ILogging& logger;

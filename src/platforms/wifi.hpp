@@ -21,5 +21,5 @@ struct IWifi {
 
     /// @brief Checks if the device is currently connected to a WiFi network.
     /// @return True if connected, false otherwise.
-    virtual bool isConnected() = 0;
+    virtual auto isConnected() -> bool = 0;
 };

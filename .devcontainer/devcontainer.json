@@ -4,7 +4,8 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "platformio.platformio-ide"
+                "platformio.platformio-ide",
+                "CS128.cs128-clang-tidy"
             ]
         }
     },
@@ -15,5 +16,6 @@
     "runArgs": [
         "--device-cgroup-rule=c 188:* rmw",
         "--device-cgroup-rule=c 166:* rmw"
-    ]
+    ],
+    "postCreateCommand": "bash .devcontainer/init.bash"
 }

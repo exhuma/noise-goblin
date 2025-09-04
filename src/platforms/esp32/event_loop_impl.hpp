@@ -3,8 +3,7 @@
 
 struct Esp32EventLoop : IEventLoop {
     ~Esp32EventLoop() override;
-    explicit Esp32EventLoop() {
-    }
+    explicit Esp32EventLoop() = default;
     using EventCallback = std::function<void(int)>;
 
     void setup() override;
@@ -21,7 +20,7 @@ struct Esp32EventLoop : IEventLoop {
   public:
     EventCallback eventCallback;
 
-    EventCallback getEventCallback() const {
+    auto getEventCallback() -> EventCallback const {
         return eventCallback;
     }
 };

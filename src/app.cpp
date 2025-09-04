@@ -69,7 +69,7 @@ void Application::loop() {
     }
 }
 
-AppState Application::computeState() {
+auto Application::computeState() -> AppState {
     std::string ssid = config.get(WIFI_SSID_KEY);
     std::string password = config.get(WIFI_PASSWORD_KEY);
 

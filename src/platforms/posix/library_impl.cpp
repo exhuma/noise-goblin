@@ -1,7 +1,8 @@
 #include "library_impl.hpp"
+#include <array>
 #include <string>
 
-const char* soundByteNames[100] = {
+const std::array<std::string, 100> soundByteNames = {
     "knockingonheavensdoor-godverdomme",
     "dp-and_so_begins_the_tale",
     "castlevania-intro",
@@ -107,7 +108,7 @@ void PosixLibrary::setup() {
     logger.info("Library Setup");
 }
 
-std::string PosixLibrary::getRandomSound() {
+auto PosixLibrary::getRandomSound() -> std::string {
     logger.info("Getting random sound");
     int index = rand() % 100;
     return soundByteNames[index];

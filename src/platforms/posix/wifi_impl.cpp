@@ -14,7 +14,7 @@ void PosixWifi::tick() {
     tickCount++;
 }
 
-bool PosixWifi::isConnected() {
+auto PosixWifi::isConnected() -> bool {
     // Simulate a connection that interrupts for a few seconds.
     if (tickCount <= 5) {
         return false;

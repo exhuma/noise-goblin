@@ -14,5 +14,5 @@ struct ILibrary {
 
     /// @brief Retrieves a random sound from the library.
     /// @return A string representing the random sound.
-    virtual std::string getRandomSound() = 0;
+    virtual auto getRandomSound() -> std::string = 0;
 };

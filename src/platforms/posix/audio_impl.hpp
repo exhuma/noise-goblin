@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdio.h>
 #include <unistd.h>
+#include <cstdio>
 #include <string>
 #include "../audio.hpp"
 #include "../logging.hpp"
