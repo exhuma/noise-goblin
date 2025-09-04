@@ -10,6 +10,7 @@
 #include <string>
 #include "app.hpp"
 
+// Import and instantiate modules for the currently selected build target
 #if defined(BUILD_ESP32)
     #include "platforms/esp32/audio_impl.hpp"
     #include "platforms/esp32/config_impl.hpp"
@@ -44,10 +45,12 @@ PosixLibrary library(logging);
 
 Application app(config, wifi, logging, audio, ui, eventLoop, library);
 
+// The Arduino entry-point for "run-once" initialisations.
 void setup() {
     app.setup();
 }
 
+// The Arduino entry-point for the core application loop
 void loop() {
     app.loop();
 }

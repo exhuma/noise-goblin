@@ -1,7 +1,3 @@
-/**
- * The main application code
- */
-
 #include "app.hpp"
 #include <string>
 #include "platforms/eventLoop.hpp"
@@ -45,13 +41,13 @@ void Application::setup() {
             break;
         }
     });
-    currentState = getState();
+    currentState = computeState();
     logger.info("----- Setup Done --------------");
 }
 
 void Application::loop() {
-    currentState = getState();  // TODO replace with an event-handling system
-                                // using the ESP32 event loop
+    currentState = computeState();  // TODO replace with an event-handling
+                                    // system using the ESP32 event loop
     ui.tick();
     switch (currentState) {
     case APP_UNINITIALISED:
@@ -73,7 +69,7 @@ void Application::loop() {
     }
 }
 
-AppState Application::getState() {
+AppState Application::computeState() {
     std::string ssid = config.get(WIFI_SSID_KEY);
     std::string password = config.get(WIFI_PASSWORD_KEY);
 

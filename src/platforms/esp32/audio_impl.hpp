@@ -15,6 +15,8 @@ struct Esp32Audio : IAudio {
 
   private:
     ILogging& logger;
+    /// @brief The current audio URL being played.
     std::string currentUrl;
+    /// @brief Mutex for synchronizing access to the current URL.
     std::mutex urlMutex;
 };

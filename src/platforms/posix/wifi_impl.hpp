@@ -12,5 +12,9 @@ struct PosixWifi : IWifi {
 
   private:
     ILogging& logger;
+    /// @brief How many times we have looped
+    /// @details In this POSIX implementation, we use this to simulate spotty
+    /// WiFi connectivity. The POSIX platform is only here for
+    /// testing/simulating.
     int tickCount = 0;
 };
