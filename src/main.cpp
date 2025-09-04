@@ -15,6 +15,7 @@
     #include "platforms/esp32/audio_impl.hpp"
     #include "platforms/esp32/config_impl.hpp"
     #include "platforms/esp32/event_loop_impl.hpp"
+    #include "platforms/esp32/http_impl.hpp"
     #include "platforms/esp32/library_impl.hpp"
     #include "platforms/esp32/logging_impl.hpp"
     #include "platforms/esp32/ui_impl.hpp"
@@ -25,11 +26,13 @@ Esp32Wifi wifi(logging);
 Esp32Audio audio(logging);
 Esp32Config config(logging);
 Esp32Ui ui(audio, config, logging, eventLoop);
-Esp32Library library(logging);
+Esp32Http http(logging);
+Esp32Library library(logging, http, config);
 #else
     #include "platforms/posix/audio_impl.hpp"
     #include "platforms/posix/config_impl.hpp"
     #include "platforms/posix/event_loop_impl.hpp"
+    #include "platforms/posix/http_impl.hpp"
     #include "platforms/posix/library_impl.hpp"
     #include "platforms/posix/logging_impl.hpp"
     #include "platforms/posix/ui_impl.hpp"
@@ -40,7 +43,8 @@ PosixWifi wifi(logging);
 PosixAudio audio(logging);
 PosixConfig config(logging);
 PosixUi ui(audio, config, logging, eventLoop);
-PosixLibrary library(logging);
+PosixHttp http(logging);
+PosixLibrary library(logging, http, config);
 #endif
 
 Application app(config, wifi, logging, audio, ui, eventLoop, library);

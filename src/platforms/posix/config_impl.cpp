@@ -73,12 +73,16 @@ static auto save_config(ILogging &logger) -> bool {
 void request_config(IConfig &config) {
     std::string ssid;
     std::string password;
+    std::string library_base_url;
     std::cout << "Enter WiFi SSID: ";
     std::getline(std::cin, ssid);
     std::cout << "Enter WiFi Password: ";
     std::getline(std::cin, password);
+    std::cout << "Enter Library Base URL: ";
+    std::getline(std::cin, library_base_url);
     config.set(WIFI_SSID_KEY, ssid.c_str());
     config.set(WIFI_PASSWORD_KEY, password.c_str());
+    config.set(LIBRARY_BASE_URL_KEY, library_base_url.c_str());
 }
 
 auto PosixConfig::get(const char *key) -> std::string {

@@ -9,8 +9,8 @@ struct ILibrary {
     /// @brief Virtual destructor for proper cleanup of derived classes.
     virtual ~ILibrary() = default;
 
-    /// @brief Sets up the sound library.
-    virtual void setup() = 0;
+    /// @brief Performs periodic tasks for the sound library.
+    virtual void tick() = 0;
 
     /// @brief Retrieves a random sound from the library.
     /// @return A string representing the random sound.

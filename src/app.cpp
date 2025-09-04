@@ -32,8 +32,7 @@ void Application::setup() {
             break;
         case EVENT_PLAY_BUTTON_PRESSED:
             logger.debug("Play button pressed event received");
-            randomSound = library.getRandomSound();
-            url = "https://base-url/" + randomSound + ".mp3";
+            url = library.getRandomSound();
             audio.play(url);
             break;
         default:
@@ -63,6 +62,7 @@ void Application::loop() {
         break;
     case APP_RUNNING:
         ui.setState(IUserInterface::LedState::Normal);
+        library.tick();
         audio.tick();
         wifi.tick();
         break;
@@ -72,8 +72,9 @@ void Application::loop() {
 auto Application::computeState() -> AppState {
     std::string ssid = config.get(WIFI_SSID_KEY);
     std::string password = config.get(WIFI_PASSWORD_KEY);
+    std::string library_base_url = config.get(LIBRARY_BASE_URL_KEY);
 
-    if (ssid.empty() || password.empty()) {
+    if (ssid.empty() || password.empty() || library_base_url.empty()) {
         return APP_UNINITIALISED;
     } else if (!wifi.isConnected()) {
         return APP_NO_NETWORK;

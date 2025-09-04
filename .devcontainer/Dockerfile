@@ -13,6 +13,8 @@ RUN apt-get update \
         curl \
         udev \
         build-essential \
+        libcurl4-openssl-dev \
+        nlohmann-json3-dev \
         libusb-1.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
