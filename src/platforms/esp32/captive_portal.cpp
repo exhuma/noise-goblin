@@ -39,13 +39,15 @@ void handleRoot() {
         "input[type=\"submit\"]:hover { background-color: #45a049; }"
         "</style>"
         "</head><body>"
-        "<h2>WiFi Setup</h2>"
+        "<h2>Initial Setup</h2>"
         "<form action=\"/connect\" method=\"POST\">"
-        "SSID: <input type=\"text\" name=\"ssid\" placeholder=\"Enter "
+        "Wifi SSID: <input type=\"text\" name=\"ssid\" placeholder=\"Enter "
         "SSID\"><br>"
-        "Password: <input type=\"password\" name=\"password\" "
+        "Wifi Password: <input type=\"password\" name=\"password\" "
         "placeholder=\"Enter Password\"><br>"
-        "<input type=\"submit\" value=\"Connect\">"
+        "Library URL: <input type=\"text\" name=\"library_url\" "
+        "placeholder=\"https://example.com/library\"><br>"
+        "<input type=\"submit\" value=\"Save\">"
         "</form>"
         "</body></html>";
     server.send(200, "text/html", html);
@@ -54,6 +56,7 @@ void handleRoot() {
 void handleConnect(IConfig& config, ILogging& logger) {
     String ssid = server.arg("ssid");
     String pass = server.arg("password");
+    String libraryUrl = server.arg("library_url");
 
     logger.info("Trying to connect to SSID: %s", ssid);
     WiFi.begin(ssid.c_str(), pass.c_str());
@@ -71,6 +74,7 @@ void handleConnect(IConfig& config, ILogging& logger) {
         logger.info("IP address: %s", WiFi.localIP());
         config.set(WIFI_SSID_KEY, ssid.c_str());
         config.set(WIFI_PASSWORD_KEY, pass.c_str());
+        config.set(LIBRARY_BASE_URL_KEY, libraryUrl.c_str());
         server.send(200, "text/html",
                     "<html><body><h3>Connection successful. "
                     "Restarting...</h3></body></html>");
