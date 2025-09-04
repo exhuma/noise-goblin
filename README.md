@@ -1,5 +1,7 @@
 # Noise Goblin
 
+![Prototype 2](docs/images/prototype-2.jpg)
+
 ## Description
 
 An application for the ESP32-S3 board to trigger random sound-bytes.
@@ -14,6 +16,8 @@ from this online collection and play it.
 ## Wiring
 
 See https://app.cirkitdesigner.com/project/fc8b766f-41c9-44f6-97f5-d1bfeb38f578
+
+![Wiring](docs/images/prototype-2.jpg)
 
 ## Project Plan
 
