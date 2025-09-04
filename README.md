@@ -15,66 +15,9 @@ from this online collection and play it.
 
 See https://app.cirkitdesigner.com/project/fc8b766f-41c9-44f6-97f5-d1bfeb38f578
 
-## Roadmap
+## Project Plan
 
-### ✅ Milestone 1: Basic Prototype
-
-#### Hardware & Basic UI
-
-- Wiring components up to be able to play sound-files from the Internet
-- Connect to a WiFi access point
-- Play an online web-radio stream
-
-#### Code
-
-- Basic PlatformIO/Arduino setup
-
-### ✅ Milestone 2: Trigger Button
-
-- Wire up a button to trigger sound playback
-- Hard coded list of sound-byte URLs
-- Fetch a random sound-byte from the list when the button is pressed
-
-#### Code
-
-- Introduce option to run a dummy implementation directly on Posix for quicker
-  feedback loop
-
-### 🔜 Milestone 3: Dynamic Sound List
-
-#### Hardware
-
-- no changes
-
-#### Code
-
-- Introduce dependency injection for improved platform abstraction.
-- Provide a configuration option for the sound-byte list
-- Replace hard-coded list with the dynamic online result
-
-### 🔜 Milestone 4: Case & Portability
-
-#### Hardware
-
-- Battery Pack
-- Get a big fat button
-- Case
-
-#### Code
-
-- TBD
-
-### 🔜 Milestone 5: More controls & Independence
-
-#### Hardware
-
-- Add a volume control
-- Add SD-Card Reader
-
-#### Code
-
-- TBD
-
+See GitHub milestones at https://github.com/exhuma/noise-goblin/milestones
 
 ## Development Setup
 
