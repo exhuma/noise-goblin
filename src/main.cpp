@@ -1,3 +1,10 @@
+/**
+ * Main entry point.
+ *
+ * This file deals with dependency injection and wiring all components together.
+ *
+ * Core logic is implemented in `app.cpp`
+ */
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -35,60 +42,14 @@ PosixUi ui(audio, config, logging, eventLoop);
 PosixLibrary library(logging);
 #endif
 
-// Instantiate the application with the active config implementation
-Application app(config, wifi, logging);
+Application app(config, wifi, logging, audio, ui, eventLoop, library);
+
 void setup() {
-    logging.setup();
-    audio.setup();
-    ui.setup();
-    wifi.setup();
-    eventLoop.setup();
-    appState = app.getState();
-    eventLoop.setEventCallback([&](int event) {
-        std::string randomSound;
-        std::string url;
-        switch (event) {
-        case EVENT_RESET_BUTTON_PRESSED:
-            logging.debug("Reset button pressed event received");
-            config.clear();
-            ui.setState(IUserInterface::LedState::Reset);
-            break;
-        case EVENT_PLAY_BUTTON_PRESSED:
-            logging.debug("Play button pressed event received");
-            randomSound = library.getRandomSound();
-            url = "https://base-url/" + randomSound + ".mp3";
-            audio.play(url);
-            break;
-        default:
-            logging.error("Unknown event received: %d", event);
-            break;
-        }
-    });
-    logging.info("----- Setup Done --------------");
+    app.setup();
 }
 
 void loop() {
-    appState = app.getState();  // TODO replace with an event-handling system
-                                // using the ESP32 event loop
-    ui.tick();
-    switch (appState) {
-    case APP_UNINITIALISED:
-    default:
-        ui.setState(IUserInterface::LedState::Off);
-        config.tick();
-        break;
-    case APP_NO_NETWORK:
-        ui.setState(IUserInterface::LedState::Connecting);
-        wifi.tick();
-        wifi.connect(config.get(WIFI_SSID_KEY).c_str(),
-                     config.get(WIFI_PASSWORD_KEY).c_str());
-        break;
-    case APP_RUNNING:
-        ui.setState(IUserInterface::LedState::Normal);
-        audio.tick();
-        wifi.tick();
-        break;
-    }
+    app.loop();
 }
 
 // Entry-point for POSIX platforms (ignored by ESP32)
