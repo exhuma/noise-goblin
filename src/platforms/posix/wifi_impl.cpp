@@ -15,7 +15,7 @@ class PosixWifi : public IWifi {
     }
 
     void tick() override {
-        logger.info("IWifi tick called %d times", tickCount);
+        logger.debug("IWifi tick called %d times", tickCount);
         tickCount++;
     }
 

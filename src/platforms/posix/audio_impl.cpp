@@ -19,7 +19,7 @@ class PosixAudio : public IAudio {
     }
 
     void tick() override {
-        logger.info("PosixAudio tick called");
+        logger.debug("PosixAudio tick called");
         sleep(1);
     }
 };

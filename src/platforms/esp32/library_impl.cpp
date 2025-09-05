@@ -27,7 +27,7 @@ class Esp32Library : public ILibrary {
             }
             soundByteNames = std::move(response);
         }
-        logger.info("Library tick: %zu sounds available",
-                    soundByteNames.size());
+        logger.debug("Library tick: %zu sounds available",
+                     soundByteNames.size());
     }
 };
