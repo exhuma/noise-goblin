@@ -48,6 +48,10 @@ class PosixEventLoop : public IEventLoop {
         eventCallback = callback;
     }
 
+    auto getEventCallback() const -> EventCallback override {
+        return eventCallback;
+    }
+
   private:
     void run() {
         while (running) {
