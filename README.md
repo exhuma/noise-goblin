@@ -52,19 +52,19 @@ This project uses PlatformIO environments defined in `platformio.ini`.
 - Build for ESP32:
 
   ```
-  pio run -e esp32-s3-devkitc
+  pio run -e esp32
   ```
 
 - Upload to ESP32:
 
   ```
-  pio run -e esp32-s3-devkitc --target upload
+  pio run -e esp32 --target upload
   ```
 
 - Open serial monitor for ESP32:
 
   ```
-  pio device monitor -e esp32-s3-devkitc
+  pio device monitor -e esp32
   ```
 
 - Build POSIX (local test binary):
@@ -77,7 +77,7 @@ This project uses PlatformIO environments defined in `platformio.ini`.
 
   ```
   # clean ESP32
-  pio run -e esp32-s3-devkitc -t clean
+  pio run -e esp32 -t clean
 
   # clean POSIX
   pio run -e posix -t clean
@@ -86,7 +86,7 @@ This project uses PlatformIO environments defined in `platformio.ini`.
 - Static analysis / code check (PlatformIO):
 
   ```
-  pio check -e esp32-s3-devkitc
+  pio check -e esp32
   ```
 
 ## Platform Support
