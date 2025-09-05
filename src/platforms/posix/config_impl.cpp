@@ -1,4 +1,4 @@
-#include "config_impl.hpp"
+#include "../config.hpp"
 #include "../logging.hpp"
 
 #include <cstdlib>
@@ -10,16 +10,16 @@
 #include <sstream>
 #include <string>
 
+static std::map<std::string, std::string> g_config;
+static bool g_loaded = false;
+static std::mutex g_mutex;
+
 static auto config_path() -> std::string {
     const char *home = std::getenv("HOME");
     if (!home)
         home = ".";
     return std::string(home) + "/.noise-goblin.conf";
 }
-
-static std::map<std::string, std::string> g_config;
-static bool g_loaded = false;
-static std::mutex g_mutex;
 
 static inline auto trim(const std::string &s) -> std::string {
     const char *ws = " \t\r\n";
@@ -70,7 +70,7 @@ static auto save_config(ILogging &logger) -> bool {
     return true;
 }
 
-void request_config(IConfig &config) {
+static void request_config(IConfig &config) {
     std::string ssid;
     std::string password;
     std::string library_base_url;
@@ -85,41 +85,47 @@ void request_config(IConfig &config) {
     config.set(LIBRARY_BASE_URL_KEY, library_base_url.c_str());
 }
 
-auto PosixConfig::get(const char *key) -> std::string {
-    if (!key) {
-        return {};
+class PosixConfig : public IConfig {
+  public:
+    PosixConfig(ILogging &logger) : IConfig(logger) {
     }
-    load_config();
-    std::lock_guard<std::mutex> lk(g_mutex);
-    auto it = g_config.find(key);
-    if (it == g_config.end()) {
-        return {};
-    }
-    return it->second;
-}
 
-void PosixConfig::set(const char *key, const char *value) {
-    if (!key)
-        return;
-    load_config();
-    {
+    auto get(const char *key) -> std::string override {
+        if (!key) {
+            return {};
+        }
+        load_config();
         std::lock_guard<std::mutex> lk(g_mutex);
-        if (value)
-            g_config[std::string(key)] = std::string(value);
-        else
-            g_config.erase(key);
+        auto it = g_config.find(key);
+        if (it == g_config.end()) {
+            return {};
+        }
+        return it->second;
     }
-    save_config(logger);
-}
 
-auto PosixConfig::tick() -> bool {
-    request_config(*this);  // <- blocking
-    return true;
-}
+    void set(const char *key, const char *value) override {
+        if (!key)
+            return;
+        load_config();
+        {
+            std::lock_guard<std::mutex> lk(g_mutex);
+            if (value)
+                g_config[std::string(key)] = std::string(value);
+            else
+                g_config.erase(key);
+        }
+        save_config(logger);
+    }
 
-void PosixConfig::clear() {
-    std::lock_guard<std::mutex> lk(g_mutex);
-    g_config.clear();
-    save_config(logger);
-    logger.info("Configuration cleared.");
-}
+    auto tick() -> bool override {
+        request_config(*this);  // <- blocking
+        return true;
+    }
+
+    void clear() override {
+        std::lock_guard<std::mutex> lk(g_mutex);
+        g_config.clear();
+        save_config(logger);
+        logger.info("Configuration cleared.");
+    }
+};

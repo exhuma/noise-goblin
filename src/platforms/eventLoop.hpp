@@ -42,4 +42,11 @@ struct IEventLoop {
     /// @brief Sets the event callback function.
     /// @param callback The callback function to set.
     virtual void setEventCallback(EventCallback callback) = 0;
+
+    /// @brief Gets the event callback function.
+    /// @return The event callback function.
+    virtual auto getEventCallback() const -> EventCallback = 0;
+
+  protected:
+    EventCallback eventCallback;
 };

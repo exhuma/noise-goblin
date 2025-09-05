@@ -1,34 +1,42 @@
-#include "http_impl.hpp"
 #include <ArduinoJson.h>
 #include <HTTPClient.h>
+#include "../http.hpp"
 
-auto Esp32Http::getResourceNames(std::string url) -> std::vector<std::string> {
-    std::vector<std::string> resourceNames;
+class Esp32Http : public IHttp {
+  public:
+    Esp32Http(ILogging& logger) : IHttp(logger) {
+    }
 
-    // Create HTTP client
-    HTTPClient http;
-    http.begin(url.c_str());
-    int httpCode = http.GET();
+    auto getResourceNames(std::string url)
+        -> std::vector<std::string> override {
+        std::vector<std::string> resourceNames;
 
-    if (httpCode == HTTP_CODE_OK) {
-        String payload = http.getString();
+        // Create HTTP client
+        HTTPClient http;
+        http.begin(url.c_str());
+        int httpCode = http.GET();
 
-        // Parse JSON
-        DynamicJsonDocument doc(200 * 1024);
-        DeserializationError error = deserializeJson(doc, payload);
+        if (httpCode == HTTP_CODE_OK) {
+            String payload = http.getString();
 
-        if (!error) {
-            if (doc.containsKey("jingles") && doc["jingles"].is<JsonArray>()) {
-                for (const auto& item : doc["jingles"].as<JsonArray>()) {
-                    if (item.containsKey("resource_str")) {
-                        resourceNames.push_back(
-                            item["resource_str"].as<std::string>());
+            // Parse JSON
+            DynamicJsonDocument doc(200 * 1024);
+            DeserializationError error = deserializeJson(doc, payload);
+
+            if (!error) {
+                if (doc.containsKey("jingles") &&
+                    doc["jingles"].is<JsonArray>()) {
+                    for (const auto& item : doc["jingles"].as<JsonArray>()) {
+                        if (item.containsKey("resource_str")) {
+                            resourceNames.push_back(
+                                item["resource_str"].as<std::string>());
+                        }
                     }
                 }
             }
         }
-    }
 
-    http.end();
-    return resourceNames;
-}
+        http.end();
+        return resourceNames;
+    }
+};

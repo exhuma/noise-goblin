@@ -1,12 +1,15 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "logging.hpp"
 
 /// @brief The HTTP subsystem
 /// @details Interface for HTTP platform functionality.
 ///
 /// Provides an abstract interface for HTTP operations.
 struct IHttp {
+    IHttp(ILogging &logger) : logger(logger) {
+    }
     /// @brief Virtual destructor for proper cleanup of derived classes.
     virtual ~IHttp() = default;
 
@@ -27,4 +30,7 @@ struct IHttp {
     /// @return A vector of strings containing the fetched resource names.
     virtual auto getResourceNames(std::string url)
         -> std::vector<std::string> = 0;
+
+  protected:
+    ILogging &logger;
 };

@@ -1,18 +1,25 @@
-#include "audio_impl.hpp"
 #include <stdio.h>
 #include <unistd.h>
 #include <string>
+#include "../audio.hpp"
+#include "../logging.hpp"
 
-void PosixAudio::setup() {
-    logger.info("PosixAudio setup called");
-    logger.debug("Audio Setup complete");
-}
+class PosixAudio : public IAudio {
+  public:
+    PosixAudio(ILogging &logger) : IAudio(logger) {
+    }
 
-void PosixAudio::play(std::string url) {
-    logger.info("PosixAudio play called with url: %s", url.c_str());
-}
+    void setup() override {
+        logger.info("IAudio setup called");
+        logger.debug("Audio Setup complete");
+    }
 
-void PosixAudio::tick() {
-    logger.info("PosixAudio tick called");
-    sleep(1);
-}
+    void play(std::string url) override {
+        logger.info("PosixAudio play called with url: %s", url.c_str());
+    }
+
+    void tick() override {
+        logger.info("PosixAudio tick called");
+        sleep(1);
+    }
+};

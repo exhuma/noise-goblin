@@ -1,65 +1,84 @@
-#include "event_loop_impl.hpp"
 #include <iostream>
+#include "../eventLoop.hpp"
 
-PosixEventLoop::~PosixEventLoop() {
-    if (running) {
-        running = false;
-        eventCondition.notify_all();
-        if (eventThread.joinable()) {
-            eventThread.join();
+class PosixEventLoop : public IEventLoop {
+    using EventCallback = std::function<void(int)>;
+
+  public:
+    PosixEventLoop() : running(false) {
+    }
+
+    ~PosixEventLoop() override {
+        if (running) {
+            running = false;
+            eventCondition.notify_all();
+            if (eventThread.joinable()) {
+                eventThread.join();
+            }
         }
     }
-}
 
-void PosixEventLoop::setup() {
-    start();
-}
+    void start() override {
+        running = true;
+        eventThread = std::thread([this] { run(); });
+    }
 
-void PosixEventLoop::start() {
-    running = true;
-    eventThread = std::thread(&PosixEventLoop::run, this);
-}
-
-void PosixEventLoop::stop() {
-    if (running) {
-        running = false;
-        eventCondition.notify_all();
-        if (eventThread.joinable()) {
-            eventThread.join();
+    void stop() override {
+        if (running) {
+            running = false;
+            eventCondition.notify_all();
+            if (eventThread.joinable()) {
+                eventThread.join();
+            }
         }
     }
-}
-
-void PosixEventLoop::postEvent(int event) {
-    {
-        std::lock_guard<std::mutex> lock(queueMutex);
-        eventQueue.push(event);
+    void setup() override {
+        start();
     }
-    eventCondition.notify_one();
-}
 
-void PosixEventLoop::setEventCallback(EventCallback callback) {
-    eventCallback = callback;
-}
-
-void PosixEventLoop::run() {
-    while (running) {
-        int event;
+    void postEvent(int event) override {
         {
-            std::unique_lock<std::mutex> lock(queueMutex);
-            eventCondition.wait(
-                lock, [this] { return !eventQueue.empty() || !running; });
+            std::lock_guard<std::mutex> lock(queueMutex);
+            eventQueue.push(event);
+        }
+        eventCondition.notify_one();
+    }
 
-            if (!running && eventQueue.empty()) {
-                break;
+    void setEventCallback(EventCallback callback) override {
+        eventCallback = callback;
+    }
+
+  private:
+    void run() {
+        while (running) {
+            int event;
+            {
+                std::unique_lock<std::mutex> lock(queueMutex);
+                eventCondition.wait(
+                    lock, [this] { return !eventQueue.empty() || !running; });
+
+                if (!running && eventQueue.empty()) {
+                    break;
+                }
+
+                event = eventQueue.front();
+                eventQueue.pop();
             }
 
-            event = eventQueue.front();
-            eventQueue.pop();
-        }
-
-        if (eventCallback) {
-            eventCallback(event);
+            if (eventCallback) {
+                eventCallback(event);
+            }
         }
     }
-}
+
+    /// @brief The event processing thread.
+    std::thread eventThread;
+    /// @brief Flag indicating whether the event loop is running.
+    std::atomic<bool> running;
+    /// @brief Queue for incoming events.
+    std::queue<int> eventQueue;
+    /// @brief Mutex for synchronizing access to the event queue.
+    std::mutex queueMutex;
+    /// @brief Condition variable for notifying event processing.
+    std::condition_variable eventCondition;
+};

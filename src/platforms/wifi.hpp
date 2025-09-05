@@ -1,10 +1,14 @@
 #pragma once
+#include "logging.hpp"
 
 /// @brief The WiFi subsystem
 /// @details Interface for WiFi platform functionality.
 ///
 /// Provides an abstract interface for WiFi operations.
 struct IWifi {
+    IWifi(ILogging &logger) : logger(logger) {
+    }
+
     /// @brief Virtual destructor for proper cleanup of derived classes.
     virtual ~IWifi() = default;
 
@@ -22,4 +26,7 @@ struct IWifi {
     /// @brief Checks if the device is currently connected to a WiFi network.
     /// @return True if connected, false otherwise.
     virtual auto isConnected() -> bool = 0;
+
+  protected:
+    ILogging &logger;
 };

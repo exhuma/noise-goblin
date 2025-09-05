@@ -1,4 +1,4 @@
-#include "config_impl.hpp"
+#include "../config.hpp"
 #include "./captive_portal.h"
 #include "nvs.h"
 #include "nvs_flash.h"
@@ -7,7 +7,7 @@
 
 static nvs_handle_t s_nvs_handle = 0;
 
-void _init_nvs() {
+static void _init_nvs() {
     static bool initialized = false;
     if (!initialized) {
         esp_err_t err = nvs_flash_init();
@@ -21,58 +21,63 @@ void _init_nvs() {
     }
 }
 
-auto _has_config() -> bool {
+static auto _has_config() -> bool {
     _init_nvs();
     esp_err_t err = nvs_get_str(s_nvs_handle, WIFI_SSID_KEY, nullptr, nullptr);
     return (err == ESP_OK);
 }
 
-auto Esp32Config::get(const char *key) -> std::string {
-    if (!key) {
-        return {};
+class Esp32Config : public IConfig {
+  public:
+    Esp32Config(ILogging &logger) : IConfig(logger) {
     }
-    _init_nvs();
-    // First call to get required size
-    size_t required_size = 0;
-    esp_err_t err = nvs_get_str(s_nvs_handle, key, nullptr, &required_size);
-    if (err != ESP_OK || required_size == 0) {
-        logger.error("Error reading key: ", key,
-                     " not found, returning default.");
-        return {};
+    auto get(const char *key) -> std::string override {
+        if (!key) {
+            return {};
+        }
+        _init_nvs();
+        // First call to get required size
+        size_t required_size = 0;
+        esp_err_t err = nvs_get_str(s_nvs_handle, key, nullptr, &required_size);
+        if (err != ESP_OK || required_size == 0) {
+            logger.error("Error reading key: ", key,
+                         " not found, returning default.");
+            return {};
+        }
+        std::string value;
+        value.resize(required_size);
+        err = nvs_get_str(s_nvs_handle, key, &value[0], &required_size);
+        if (err != ESP_OK) {
+            logger.error("Error reading value after allocating buffer");
+            return {};
+        }
+        // nvs_get_str writes the null terminator; shrink to actual length
+        if (!value.empty() && value.back() == '\0')
+            value.pop_back();
+        return value;
     }
-    std::string value;
-    value.resize(required_size);
-    err = nvs_get_str(s_nvs_handle, key, &value[0], &required_size);
-    if (err != ESP_OK) {
-        logger.error("Error reading value after allocating buffer");
-        return {};
-    }
-    // nvs_get_str writes the null terminator; shrink to actual length
-    if (!value.empty() && value.back() == '\0')
-        value.pop_back();
-    return value;
-}
 
-void Esp32Config::set(const char *key, const char *value) {
-    _init_nvs();
-    logger.debug("set_config_value called with key: ", key,
-                 "and value: ", value);
-    esp_err_t err = nvs_set_str(s_nvs_handle, key, value);
-    nvs_commit(s_nvs_handle);
-}
-
-auto Esp32Config::tick() -> bool {
-    if (_has_config()) {
-        return true;
+    void set(const char *key, const char *value) override {
+        _init_nvs();
+        logger.debug("set_config_value called with key: ", key,
+                     "and value: ", value);
+        esp_err_t err = nvs_set_str(s_nvs_handle, key, value);
+        nvs_commit(s_nvs_handle);
     }
-    start_captive_portal(*this, logger);
-    process_request(logger);
-    return false;
-}
 
-void Esp32Config::clear() {
-    _init_nvs();
-    nvs_erase_all(s_nvs_handle);
-    nvs_commit(s_nvs_handle);
-    logger.info("Configuration cleared.");
-}
+    auto tick() -> bool override {
+        if (_has_config()) {
+            return true;
+        }
+        start_captive_portal(*this, logger);
+        process_request(logger);
+        return false;
+    }
+
+    void clear() override {
+        _init_nvs();
+        nvs_erase_all(s_nvs_handle);
+        nvs_commit(s_nvs_handle);
+        logger.info("Configuration cleared.");
+    }
+};

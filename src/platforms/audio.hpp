@@ -1,11 +1,15 @@
 #pragma once
 #include <string>
+#include "logging.hpp"
 
 /// @brief The Audio subsystem
 /// @details Interface for audio platform functionality.
 ///
 /// Provides an abstract interface for audio operations.
 struct IAudio {
+    IAudio(ILogging &logger) : logger(logger) {
+    }
+
     /// @brief Virtual destructor for proper cleanup of derived classes.
     virtual ~IAudio() = default;
 
@@ -18,4 +22,7 @@ struct IAudio {
 
     /// @brief Performs periodic audio-related tasks or updates.
     virtual void tick() = 0;
+
+  protected:
+    ILogging &logger;
 };

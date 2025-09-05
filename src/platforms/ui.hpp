@@ -1,4 +1,6 @@
 #pragma once
+#include "eventLoop.hpp"
+#include "logging.hpp"
 
 /// @brief The user-interface subsystem
 /// @details Interface for user-interface functionality.
@@ -7,6 +9,10 @@
 /// The responsibility of the User-Interface is to interact with the user.
 /// Collect input, provide feedback.
 struct IUserInterface {
+    IUserInterface(ILogging &logger, IEventLoop &eventLoop)
+        : logger(logger), eventLoop(eventLoop) {
+    }
+
     /// @brief Enumeration for LED states.
     enum class LedState { Off, CaptivePortal, Reset, Normal, Connecting };
 
@@ -21,4 +27,9 @@ struct IUserInterface {
 
     /// @brief Sets the LED state.
     virtual void setState(LedState state) = 0;
+
+  protected:
+    ILogging &logger;
+    LedState ledState = LedState::Off;
+    IEventLoop &eventLoop;
 };

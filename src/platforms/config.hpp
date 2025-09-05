@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <string>
+#include "logging.hpp"
 
 /// @brief WiFi SSID configuration key
 inline const char *WIFI_SSID_KEY = "wifi_ssid";
@@ -17,6 +18,9 @@ inline const char *LIBRARY_BASE_URL_KEY = "library_base_url";
 ///
 /// Provides an abstract interface for configuration operations.
 struct IConfig {
+    IConfig(ILogging &logger) : logger(logger) {
+    }
+
     /// @brief Virtual destructor for proper cleanup of derived classes.
     virtual ~IConfig() = default;
 
@@ -38,4 +42,7 @@ struct IConfig {
 
     /// @brief Clears all configuration settings.
     virtual void clear() = 0;
+
+  protected:
+    ILogging &logger;
 };

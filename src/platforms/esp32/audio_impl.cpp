@@ -1,38 +1,47 @@
-#include "audio_impl.hpp"
 #include <mutex>
 #include <string>
+#include "../audio.hpp"
 #include "Audio.h"
 
-Audio esp32_audio;
+static Audio esp32_audio;
 
-void Esp32Audio::setup() {
-    esp32_audio.setPinout(17,  // I2S_BCLK
-                          16,  // I2S_LRC
-                          15   // I2S_DOUT
-    );
-    esp32_audio.setVolume(20);
-    logger.debug("Audio Setup complete");
-}
-
-void Esp32Audio::play(std::string url) {
-    logger.debug("Playing %s", url.c_str());
-    {
-        std::lock_guard<std::mutex> lock(urlMutex);
-        currentUrl = url;
+class Esp32Audio : public IAudio {
+  public:
+    Esp32Audio(ILogging &logger) : IAudio(logger) {
     }
-}
+    void setup() override {
+        esp32_audio.setPinout(17,  // I2S_BCLK
+                              16,  // I2S_LRC
+                              15   // I2S_DOUT
+        );
+        esp32_audio.setVolume(20);
+        logger.debug("Audio Setup complete");
+    }
 
-void Esp32Audio::tick() {
-    if (!currentUrl.empty()) {
-        esp32_audio.stopSong();
-        const bool success = esp32_audio.connecttohost(currentUrl.c_str());
+    void play(std::string url) override {
+        logger.debug("Playing %s", url.c_str());
         {
             std::lock_guard<std::mutex> lock(urlMutex);
-            currentUrl.clear();
-        }
-        if (!success) {
-            logger.error("Failed to connect to host");
+            currentUrl = url;
         }
     }
-    esp32_audio.loop();
-}
+
+    void tick() override {
+        if (!currentUrl.empty()) {
+            esp32_audio.stopSong();
+            const bool success = esp32_audio.connecttohost(currentUrl.c_str());
+            {
+                std::lock_guard<std::mutex> lock(urlMutex);
+                currentUrl.clear();
+            }
+            if (!success) {
+                logger.error("Failed to connect to host");
+            }
+        }
+        esp32_audio.loop();
+    }
+
+  private:
+    std::mutex urlMutex;
+    std::string currentUrl;
+};
