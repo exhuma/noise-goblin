@@ -12,7 +12,7 @@ Application::Application(IConfig &config, IWifi &wifi, ILogging &logger,
       ui(ui),
       eventLoop(eventLoop),
       library(library),
-      currentState(APP_UNINITIALISED) {
+      currentState(RequestingConfig) {
 }
 
 void Application::setup() {
@@ -28,7 +28,6 @@ void Application::setup() {
         case EVENT_RESET_BUTTON_PRESSED:
             logger.debug("Reset button pressed event received");
             config.clear();
-            ui.setState(IUserInterface::LedState::Reset);
             break;
         case EVENT_PLAY_BUTTON_PRESSED:
             logger.debug("Play button pressed event received");
@@ -48,20 +47,18 @@ void Application::loop() {
     currentState = computeState();  // TODO replace with an event-handling
                                     // system using the ESP32 event loop
     ui.tick();
+    ui.setState(currentState);
     switch (currentState) {
-    case APP_UNINITIALISED:
+    case RequestingConfig:
     default:
-        ui.setState(IUserInterface::LedState::Off);
         config.tick();
         break;
-    case APP_NO_NETWORK:
-        ui.setState(IUserInterface::LedState::Connecting);
+    case NoNetwork:
         wifi.tick();
         wifi.connect(config.get(WIFI_SSID_KEY).c_str(),
                      config.get(WIFI_PASSWORD_KEY).c_str());
         break;
-    case APP_RUNNING:
-        ui.setState(IUserInterface::LedState::Normal);
+    case Normal:
         library.tick();
         audio.tick();
         wifi.tick();
@@ -75,10 +72,10 @@ auto Application::computeState() -> AppState {
     std::string library_base_url = config.get(LIBRARY_BASE_URL_KEY);
 
     if (ssid.empty() || password.empty() || library_base_url.empty()) {
-        return APP_UNINITIALISED;
+        return RequestingConfig;
     } else if (!wifi.isConnected()) {
-        return APP_NO_NETWORK;
+        return NoNetwork;
     } else {
-        return APP_RUNNING;
+        return Normal;
     }
 }

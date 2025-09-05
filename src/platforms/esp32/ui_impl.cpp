@@ -1,4 +1,5 @@
 #include <Adafruit_NeoPixel.h>
+#include "../../enum.hpp"
 #include "../ui.hpp"
 #include "Arduino.h"
 
@@ -68,27 +69,23 @@ class Esp32Ui : public IUserInterface {
             delay(200);
         }
         switch (ledState) {
-        case LedState::Off:
-        default:
-            strip.setPixelColor(0, strip.Color(0, 0, 0));
-            break;
-        case LedState::CaptivePortal:
+        case AppState::RequestingConfig:
             strip.setPixelColor(0, strip.Color(0, 0, 255));
             break;
-        case LedState::Reset:
-            strip.setPixelColor(0, strip.Color(255, 0, 0));
-            break;
-        case LedState::Normal:
+        case AppState::Normal:
             strip.setPixelColor(0, strip.Color(0, 255, 0));
             break;
-        case LedState::Connecting:
+        case AppState::Connecting:
             strip.setPixelColor(0, strip.Color(255, 165, 0));
+            break;
+        case AppState::NoNetwork
+            strip.setPixelColor(0, strip.Color(255, 0, 0));
             break;
         }
         strip.show();
     }
 
-    void setState(LedState state) override {
+    void setState(AppState state) override {
         ledState = state;
     }
 };

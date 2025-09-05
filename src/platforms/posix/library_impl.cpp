@@ -26,7 +26,5 @@ class PosixLibrary : public ILibrary {
             }
             soundByteNames = std::move(response);
         }
-        logger.info("Library tick: %zu sounds available",
-                    soundByteNames.size());
     }
 };

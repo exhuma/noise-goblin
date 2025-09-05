@@ -1,4 +1,5 @@
 #pragma once
+#include "../enum.hpp"
 #include "eventLoop.hpp"
 #include "logging.hpp"
 
@@ -13,9 +14,6 @@ struct IUserInterface {
         : logger(logger), eventLoop(eventLoop) {
     }
 
-    /// @brief Enumeration for LED states.
-    enum class LedState { Off, CaptivePortal, Reset, Normal, Connecting };
-
     /// @brief Virtual destructor for proper cleanup of derived classes.
     virtual ~IUserInterface() = default;
 
@@ -25,11 +23,11 @@ struct IUserInterface {
     /// @brief Updates the user-interface state.
     virtual void tick() = 0;
 
-    /// @brief Sets the LED state.
-    virtual void setState(LedState state) = 0;
+    /// @brief Sets the application state.
+    virtual void setState(AppState state) = 0;
 
   protected:
     ILogging &logger;
-    LedState ledState = LedState::Off;
     IEventLoop &eventLoop;
+    AppState appState;
 };

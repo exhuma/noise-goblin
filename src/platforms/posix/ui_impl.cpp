@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <string>
+#include "../../enum.hpp"
 #include "../logging.hpp"
 #include "../ui.hpp"
 
@@ -40,24 +41,21 @@ class PosixUserInterface : public IUserInterface {
     }
 
     void tick() override {
-        switch (ledState) {
+        switch (appState) {
         default:
-            logger.info("LED State: Unknown");
+            logger.info("App State: Unknown");
             break;
-        case LedState::Normal:
-            logger.info("LED State: Normal");
+        case AppState::Normal:
+            logger.info("App State: Normal");
             break;
-        case LedState::CaptivePortal:
-            logger.info("LED State: Captive Portal");
+        case AppState::RequestingConfig:
+            logger.info("App State: Requesting Config");
             break;
-        case LedState::Reset:
-            logger.info("LED State: Reset");
+        case AppState::Connecting:
+            logger.info("App State: Connecting");
             break;
-        case LedState::Connecting:
-            logger.info("LED State: Connecting");
-            break;
-        case LedState::Off:
-            logger.info("LED State: Off");
+        case AppState::NoNetwork:
+            logger.info("App State: No Network");
             break;
         }
         setNonCanonicalMode();
@@ -73,7 +71,7 @@ class PosixUserInterface : public IUserInterface {
         restoreTerminalMode();
     }
 
-    void setState(LedState state) override {
-        ledState = state;
+    void setState(AppState state) override {
+        appState = state;
     }
 };

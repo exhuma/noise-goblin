@@ -4,6 +4,7 @@
  * The main application code
  */
 
+#include "enum.hpp"
 #include "platforms/audio.hpp"
 #include "platforms/config.hpp"
 #include "platforms/eventLoop.hpp"
@@ -11,11 +12,6 @@
 #include "platforms/logging.hpp"
 #include "platforms/ui.hpp"
 #include "platforms/wifi.hpp"
-
-/// @brief Possible application states
-/// @details These are used during the main-loop to display useful information
-/// to the user and/or request user-input.
-enum AppState { APP_UNINITIALISED, APP_RUNNING, APP_NO_NETWORK };
 
 /// @class Application
 /// @brief Manages the main application lifecycle reacts to user-input, gives
