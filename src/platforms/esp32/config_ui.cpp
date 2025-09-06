@@ -98,18 +98,13 @@ class Esp32ConfigUi : public IConfigUi {
         // Setup web handlers
         // Serve the main page for all GET requests
         webServer.onNotFound([&]() {
-            if (webServer.method() == HTTP_GET) {
-                logger.debug("Redirecting %s to root page", webServer.uri());
-                logger.debug("Redirecting %s to root page", webServer.uri().c_str());
-                handleRoot();
-            } else {
-                logger.info("404 - Not Found: %s", webServer.uri().c_str());
-                webServer.send(404, "text/plain", "Not found");
-            }
+            logger.info("404 - Not Found: %s", webServer.uri().c_str());
+            webServer.send(404, "text/plain", "Not found");
         });
 
         // Only handle POST on /connect explicitly
-        webServer.on("/connect", HTTP_POST, [&]() { handleSave(); });
+        webServer.on("/save", HTTP_POST, [&]() { handleSave(); });
+        webServer.on("/", HTTP_GET, [&]() { handleRoot(); });
         webServer.begin();
         PORTAL_STATE = PORTAL_RUNNING;
     }
