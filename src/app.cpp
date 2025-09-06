@@ -54,7 +54,6 @@ void Application::loop() {
     ui.setState(currentState);
     switch (currentState) {
     case RequestingConfig:
-    default:
         storedValues = config.getAll();
         if (storedValues[WIFI_SSID_KEY].empty()) {
             config.set(WIFI_SSID_KEY,
@@ -82,6 +81,7 @@ void Application::loop() {
         wifi.connect(config.get(WIFI_SSID_KEY).c_str(),
                      config.get(WIFI_PASSWORD_KEY).c_str());
         break;
+    default:
     case Normal:
         library.tick();
         audio.tick();
