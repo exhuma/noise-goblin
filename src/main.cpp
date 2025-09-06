@@ -44,7 +44,7 @@ Esp32Library library(logging, http, config);
 PosixEventLoop eventLoop;
 PosixLogging logging;
 PosixConfigUi configUi(logging);
-PosixWifi wifi(logging);
+PosixWifi wifi(logging, eventLoop);
 PosixAudio audio(logging, eventLoop);
 PosixConfig config(logging, configUi);
 PosixUserInterface ui(logging, eventLoop);

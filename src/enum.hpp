@@ -6,7 +6,7 @@
 /// @brief Possible application states
 /// @details These are used during the main-loop to display useful information
 /// to the user and/or request user-input.
-enum AppState { RequestingConfig, Normal, NoNetwork, Connecting, PlayingSound };
+enum AppState { Startup, RequestingConfig, Normal, Connecting, PlayingSound };
 
 /// @brief Converts AppState enum to its string representation
 /// @param state The AppState enum value
@@ -17,12 +17,12 @@ inline auto appStateToString(AppState state) -> std::string {
         return "RequestingConfig";
     case AppState::Normal:
         return "Normal";
-    case AppState::NoNetwork:
-        return "NoNetwork";
     case AppState::Connecting:
         return "Connecting";
     case AppState::PlayingSound:
         return "PlayingSound";
+    case AppState::Startup:
+        return "Startup";
     default: {
         std::string foo =
             "Unknown (" + std::to_string(static_cast<int>(state)) + ")";

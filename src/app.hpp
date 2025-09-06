@@ -40,12 +40,6 @@ class Application {
     /// @details This implements the default Arduino loop() entry-point
     void loop();
 
-    /// @brief Determine the current state of the system.
-    /// @details This looks at various subsystems and determines the current
-    /// application state. Depending on state, the system changes behaviour.
-    /// @return The current application state.
-    auto computeState() -> AppState;
-
   private:
     IConfig &config;
     ILogging &logger;
@@ -55,6 +49,6 @@ class Application {
     IEventLoop &eventLoop;
     ILibrary &library;
     IConfigUi &configUi;
-    AppState currentState;
+    AppState currentState = AppState::Startup;
     std::map<std::string, std::string> configBackup;
 };

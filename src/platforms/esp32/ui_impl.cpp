@@ -84,14 +84,7 @@ class Esp32Ui : public IUserInterface {
         case AppState::Connecting:
             strip.setPixelColor(0, strip.Color(255, 165, 0));
             break;
-        case AppState::NoNetwork:
-            strip.setPixelColor(0, strip.Color(255, 0, 0));
-            break;
         }
         strip.show();
-    }
-
-    void setState(AppState state) override {
-        appState = state;
     }
 };

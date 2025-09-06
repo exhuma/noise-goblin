@@ -21,6 +21,12 @@ inline const int SOUND_PLAY_STARTED = 3;
 /// @brief A sound has stopped playing
 inline const int SOUND_PLAY_STOPPED = 4;
 
+/// @brief A new network connection was requested
+inline const int EVENT_WIFI_CONNECTING = 5;
+
+/// @brief A new network connection was established
+inline const int EVENT_WIFI_CONNECTED = 6;
+
 /// @brief The Event-Loop subsystem
 /// @details Interface for event loop functionality.
 ///

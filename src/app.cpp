@@ -31,6 +31,7 @@ void Application::setup() {
             logger.debug("Reset button pressed event received");
             configUi.setDefaults(config.getAll());  // keep a backup
             config.clear();
+            currentState = AppState::RequestingConfig;
             break;
         case EVENT_PLAY_BUTTON_PRESSED:
             logger.debug("Play button pressed event received");
@@ -41,24 +42,38 @@ void Application::setup() {
             currentState = AppState::PlayingSound;
             break;
         case SOUND_PLAY_STOPPED:
+        case EVENT_WIFI_CONNECTED:
             currentState = AppState::Normal;
+            break;
+        case EVENT_WIFI_CONNECTING:
+            currentState = AppState::Connecting;
             break;
         default:
             logger.error("Unknown event received: %d", event);
             break;
         }
     });
-    currentState = computeState();
+    currentState = Startup;
     logger.info("----- Setup Done --------------");
 }
 
 void Application::loop() {
     std::map<std::string, std::string> storedValues;
-    currentState = computeState();  // TODO replace with an event-handling
-                                    // system using the ESP32 event loop
-    ui.tick();
-    ui.setState(currentState);
+    std::string ssid;
+    std::string password;
+    std::string library_base_url;
+    ui.tick(currentState);  // User-interface should always get a tick.
     switch (currentState) {
+    case Startup:
+        ssid = config.get(WIFI_SSID_KEY);
+        password = config.get(WIFI_PASSWORD_KEY);
+        library_base_url = config.get(LIBRARY_BASE_URL_KEY);
+        if (ssid.empty() || password.empty() || library_base_url.empty()) {
+            currentState = RequestingConfig;
+            break;
+        }
+        wifi.connect(ssid.c_str(), password.c_str());
+        break;
     case RequestingConfig:
         configUi.start();
         configUi.tick();
@@ -83,11 +98,11 @@ void Application::loop() {
                     .c_str());
             return;  // liberate the loop
         }
-        break;
-    case NoNetwork:
-        wifi.tick();
         wifi.connect(config.get(WIFI_SSID_KEY).c_str(),
                      config.get(WIFI_PASSWORD_KEY).c_str());
+        break;
+    case Connecting:
+        wifi.tick();
         break;
     default:
     case Normal:
@@ -95,22 +110,5 @@ void Application::loop() {
         audio.tick();
         wifi.tick();
         break;
-    }
-}
-
-auto Application::computeState() -> AppState {
-    if (currentState == AppState::PlayingSound) {
-        return AppState::PlayingSound;
-    }
-    std::string ssid = config.get(WIFI_SSID_KEY);
-    std::string password = config.get(WIFI_PASSWORD_KEY);
-    std::string library_base_url = config.get(LIBRARY_BASE_URL_KEY);
-
-    if (ssid.empty() || password.empty() || library_base_url.empty()) {
-        return RequestingConfig;
-    } else if (!wifi.isConnected()) {
-        return NoNetwork;
-    } else {
-        return Normal;
     }
 }

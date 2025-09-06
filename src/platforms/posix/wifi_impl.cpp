@@ -4,7 +4,8 @@
 
 class PosixWifi : public IWifi {
   public:
-    PosixWifi(ILogging &logger) : IWifi{logger} {
+    PosixWifi(ILogging &logger, IEventLoop &eventLoop)
+        : IWifi{logger, eventLoop} {
         startupTime = std::chrono::system_clock::now();
     }
 
@@ -15,9 +16,15 @@ class PosixWifi : public IWifi {
     void connect(const char *ssid, const char *password) override {
         logger.info("Connecting to WiFi with SSID %s using password %s", ssid,
                     password);
+        newConnectionRequested = true;
+        eventLoop.postEvent(EVENT_WIFI_CONNECTING);
     }
 
     void tick() override {
+        if (newConnectionRequested && isConnected()) {
+            eventLoop.postEvent(EVENT_WIFI_CONNECTED);
+            newConnectionRequested = false;
+        }
     }
 
     auto isConnected() -> bool override {
@@ -28,4 +35,5 @@ class PosixWifi : public IWifi {
 
   private:
     std::chrono::system_clock::time_point startupTime;
+    bool newConnectionRequested = false;
 };

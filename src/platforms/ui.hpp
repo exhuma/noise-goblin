@@ -21,13 +21,9 @@ struct IUserInterface {
     virtual void setup() = 0;
 
     /// @brief Updates the user-interface state.
-    virtual void tick() = 0;
-
-    /// @brief Sets the application state.
-    virtual void setState(AppState state) = 0;
+    virtual void tick(AppState state) = 0;
 
   protected:
     ILogging &logger;
     IEventLoop &eventLoop;
-    AppState appState;
 };

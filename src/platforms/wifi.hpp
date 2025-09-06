@@ -1,4 +1,5 @@
 #pragma once
+#include "eventLoop.hpp"
 #include "logging.hpp"
 
 /// @brief The WiFi subsystem
@@ -6,7 +7,8 @@
 ///
 /// Provides an abstract interface for WiFi operations.
 struct IWifi {
-    IWifi(ILogging &logger) : logger(logger) {
+    IWifi(ILogging &logger, IEventLoop &eventLoop)
+        : logger(logger), eventLoop(eventLoop) {
     }
 
     /// @brief Virtual destructor for proper cleanup of derived classes.
@@ -29,4 +31,5 @@ struct IWifi {
 
   protected:
     ILogging &logger;
+    IEventLoop &eventLoop;
 };

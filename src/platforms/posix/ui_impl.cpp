@@ -48,7 +48,7 @@ class PosixUserInterface : public IUserInterface {
         logger.debug("UI Setup complete");
     }
 
-    void tick() override {
+    void tick(AppState state) override {
         // Braille spinner characters encoded as UTF-8
         static const std::array<const char *, 10> spinner = {
             u8"\u280B", u8"\u2819", u8"\u2839", u8"\u2838", u8"\u283C",
@@ -57,7 +57,7 @@ class PosixUserInterface : public IUserInterface {
             sizeof(spinner) / sizeof(spinner[0]);
         static std::size_t spinnerIndex = 0;
         std::cout << "\r" << spinner[spinnerIndex % spinnerSize]
-                  << " App State: " << rpad(appStateToString(appState), 50)
+                  << " App State: " << rpad(appStateToString(state), 50)
                   << std::flush;
 
         spinnerIndex = (spinnerIndex + 1) % spinner.size();
@@ -74,9 +74,5 @@ class PosixUserInterface : public IUserInterface {
             }
         }
         restoreTerminalMode();
-    }
-
-    void setState(AppState state) override {
-        appState = state;
     }
 };
