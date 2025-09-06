@@ -111,7 +111,6 @@ class PosixConfig : public IConfig {
     }
 
     void clear() override {
-        configUi.setDefaults(getAll());  // keep a backup
         std::lock_guard<std::mutex> lk(g_mutex);
         g_config.clear();
         save_config(logger);

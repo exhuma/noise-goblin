@@ -30,6 +30,7 @@ void Application::setup() {
         switch (event) {
         case EVENT_RESET_BUTTON_PRESSED:
             logger.debug("Reset button pressed event received");
+            configUi.setDefaults(config.getAll());  // keep a backup
             config.clear();
             break;
         case EVENT_PLAY_BUTTON_PRESSED:
@@ -54,6 +55,8 @@ void Application::loop() {
     ui.setState(currentState);
     switch (currentState) {
     case RequestingConfig:
+        configUi.start();
+        configUi.tick();
         storedValues = config.getAll();
         if (storedValues[WIFI_SSID_KEY].empty()) {
             config.set(WIFI_SSID_KEY,

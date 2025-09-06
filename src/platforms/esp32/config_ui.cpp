@@ -59,6 +59,20 @@ static const String FAILURE_PAGE =
     "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
     "</head><body><h3>Connection failed</h3></body></html>";
 
+static auto replace(std::string str, const char* from,
+                    const std::map<std::string, std::string>& defaults)
+    -> std::string {
+    size_t start_pos = 0;
+    std::string wrapped_key = "{" + std::string(from) + "}";
+    std::string to = defaults.count(from) ? defaults.at(from) : "";
+    while ((start_pos = str.find(wrapped_key, start_pos)) !=
+           std::string::npos) {
+        str.replace(start_pos, wrapped_key.length(), to);
+        start_pos += to.length();
+    }
+    return str;
+}
+
 class Esp32ConfigUi : public IConfigUi {
   public:
     Esp32ConfigUi(ILogging& logger) : IConfigUi(logger) {
@@ -102,8 +116,7 @@ class Esp32ConfigUi : public IConfigUi {
 
     auto promptFor(const std::string& key, const std::string& message)
         -> std::string override {
-        std::string ourDefault = defaults.count(key) ? defaults[key] : "";
-        return userResponses.count(key) ? userResponses[key] : ourDefault;
+        return userResponses.count(key) ? userResponses[key] : "";
     }
 
     auto isRunning() -> bool override {
@@ -133,13 +146,9 @@ class Esp32ConfigUi : public IConfigUi {
 
     void handleRoot() {
         std::string page = ROOT_PAGE;
-        for (const auto& [key, value] : defaults) {
-            std::string placeholder = "{" + key + "}";
-            size_t pos = page.find(placeholder);
-            if (pos != std::string::npos) {
-                page.replace(pos, placeholder.length(), value);
-            }
-        }
+        page = replace(page, WIFI_SSID_KEY, defaults);
+        page = replace(page, WIFI_PASSWORD_KEY, defaults);
+        page = replace(page, LIBRARY_BASE_URL_KEY, defaults);
         webServer.send(200, "text/html", String(page.c_str()));
     }
 
@@ -156,8 +165,7 @@ class Esp32ConfigUi : public IConfigUi {
             userResponses[WIFI_PASSWORD_KEY] = pass.c_str();
             userResponses[LIBRARY_BASE_URL_KEY] = libraryUrl.c_str();
             webServer.send(200, "text/html", SUCCESS_PAGE);
-            delay(2000);
-            ESP.restart();
+            defaults.clear();
         } else {
             logger.error("Failed to connect.");
             webServer.send(200, "text/html", FAILURE_PAGE);
