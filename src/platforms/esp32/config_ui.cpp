@@ -76,7 +76,7 @@ class Esp32ConfigUi : public IConfigUi {
         logger.info("Configuration UI started");
         logger.info("Connect your phone to WiFi: %s", apSSID);
         logger.info("Password: %s", apPassword);
-        logger.info("Then open: http://%s", myIP);
+        logger.info("Then open: http://%s", myIP.toString().c_str());
 
         // DNS server to redirect all queries to our ESP
         dnsServer.start(DNS_PORT, "*", myIP);
@@ -86,9 +86,10 @@ class Esp32ConfigUi : public IConfigUi {
         webServer.onNotFound([&]() {
             if (webServer.method() == HTTP_GET) {
                 logger.debug("Redirecting %s to root page", webServer.uri());
+                logger.debug("Redirecting %s to root page", webServer.uri().c_str());
                 handleRoot();
             } else {
-                logger.info("404 - Not Found: %s", webServer.uri());
+                logger.info("404 - Not Found: %s", webServer.uri().c_str());
                 webServer.send(404, "text/plain", "Not found");
             }
         });
