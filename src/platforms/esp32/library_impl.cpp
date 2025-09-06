@@ -27,9 +27,7 @@ class Esp32Library : public ILibrary {
             }
             logger.info("Loading sounds from %s", baseUrl.c_str());
             auto response = http.getResourceNames(baseUrl);
-            for (const auto &name : response) {
-                logger.info("Resource found: %s", name.c_str());
-            }
+            logger.info("Loaded %d resources", response.size());
             soundByteNames = std::move(response);
         }
     }

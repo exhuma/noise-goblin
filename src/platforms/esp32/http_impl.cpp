@@ -9,7 +9,7 @@ static void collectResources(WiFiClient* client,
     std::string current;
     int depth = 0;
     char c;
-    char buffer[512];
+    char buffer[1024];
 
     while (client->available()) {
         size_t bytesRead = client->readBytes(buffer, sizeof(buffer) - 1);
@@ -53,7 +53,7 @@ class Esp32Http : public IHttp {
             auto client = http.getStreamPtr();
             collectResources(client, [&](const std::string& jsonString) {
                 try {
-                    DynamicJsonDocument doc(200);
+                    DynamicJsonDocument doc(1024);
                     DeserializationError error =
                         deserializeJson(doc, jsonString);
                     if (!error) {
