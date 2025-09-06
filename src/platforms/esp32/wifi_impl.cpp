@@ -17,7 +17,7 @@ class Esp32Wifi : public IWifi {
             logger.info("Already connected or connecting to WiFi");
             return;
         }
-        logger.info("Connecting to WiFi: ", ssid);
+        logger.info("Connecting to WiFi: %s", ssid);
         WiFi.begin(ssid, password);
         isConnecting = true;
         remainingRetries = 10;
