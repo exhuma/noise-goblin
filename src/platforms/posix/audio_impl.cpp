@@ -17,9 +17,10 @@ class PosixAudio : public IAudio {
     void play(std::string url) override {
         logger.info("PosixAudio play called with url: %s", url.c_str());
         sleep(5);
+        logger.info("Finished playing audio from URL: %s", url.c_str());
     }
 
     void tick() override {
-        logger.debug("PosixAudio tick called");
+        // no-op
     }
 };

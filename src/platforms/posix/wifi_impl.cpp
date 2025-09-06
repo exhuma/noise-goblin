@@ -15,8 +15,13 @@ class PosixWifi : public IWifi {
     }
 
     void tick() override {
-        logger.debug("IWifi tick called %d times", tickCount);
-        tickCount++;
+        // We only simulate state-changes for 100 iterations. This is just to
+        // avoid running into overflows if the application runs for an extended
+        // period of time. Not really necessary but it keeps things simple for
+        // testing
+        if (tickCount < 100) {
+            tickCount++;
+        }
     }
 
     auto isConnected() -> bool override {
