@@ -69,6 +69,7 @@ class PosixUserInterface : public IUserInterface {
             }
         }
         restoreTerminalMode();
+        sleep(1);
     }
 
     void setState(AppState state) override {
