@@ -1,5 +1,6 @@
+#include <map>
+#include "../../const.hpp"
 #include "../config.hpp"
-#include "./captive_portal.h"
 #include "nvs.h"
 #include "nvs_flash.h"
 
@@ -29,8 +30,10 @@ static auto _has_config() -> bool {
 
 class Esp32Config : public IConfig {
   public:
-    Esp32Config(ILogging &logger) : IConfig(logger) {
+    Esp32Config(ILogging &logger, IConfigUi &configUi)
+        : IConfig(logger, configUi) {
     }
+
     auto get(const char *key) -> std::string override {
         if (!key) {
             return {};
@@ -65,13 +68,22 @@ class Esp32Config : public IConfig {
         nvs_commit(s_nvs_handle);
     }
 
-    auto tick() -> bool override {
-        if (_has_config()) {
-            return true;
+    void tick() override {
+        if (!configUi.isRunning()) {
+            configUi.start();
         }
-        start_captive_portal(*this, logger);
-        process_request(logger);
-        return false;
+        configUi.tick();
+    }
+
+    auto getAll() -> std::map<std::string, std::string> override {
+        _init_nvs();
+        std::map<std::string, std::string> config;
+        // Iterate over all keys and get their values
+        for (const auto &key :
+             {WIFI_SSID_KEY, WIFI_PASSWORD_KEY, LIBRARY_BASE_URL_KEY}) {
+            config[key] = get(key);
+        }
+        return config;
     }
 
     void clear() override {

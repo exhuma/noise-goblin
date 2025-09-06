@@ -1,4 +1,5 @@
 #include "../config.hpp"
+#include "../config_ui.hpp"
 #include "../logging.hpp"
 
 #include <cstdlib>
@@ -72,7 +73,8 @@ static auto save_config(ILogging &logger) -> bool {
 
 class PosixConfig : public IConfig {
   public:
-    PosixConfig(ILogging &logger) : IConfig(logger) {
+    PosixConfig(ILogging &logger, IConfigUi &configUi)
+        : IConfig(logger, configUi) {
     }
 
     auto get(const char *key) -> std::string override {
@@ -102,14 +104,6 @@ class PosixConfig : public IConfig {
         save_config(logger);
     }
 
-    auto prompt(const std::string &message, const std::string &default_value)
-        -> std::string override {
-        std::string input;
-        std::cout << message << " [default: " << default_value << "]: ";
-        std::getline(std::cin, input);
-        return input.empty() ? default_value : input;
-    }
-
     auto getAll() -> std::map<std::string, std::string> override {
         load_config();
         std::lock_guard<std::mutex> lk(g_mutex);
@@ -117,9 +111,14 @@ class PosixConfig : public IConfig {
     }
 
     void clear() override {
+        configUi.setDefaults(getAll());  // keep a backup
         std::lock_guard<std::mutex> lk(g_mutex);
         g_config.clear();
         save_config(logger);
         logger.info("Configuration cleared.");
+    }
+
+    void tick() override {
+        // no-op
     }
 };

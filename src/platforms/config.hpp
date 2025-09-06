@@ -3,16 +3,9 @@
 #include <cstddef>
 #include <map>
 #include <string>
+#include "../const.hpp"
+#include "config_ui.hpp"
 #include "logging.hpp"
-
-/// @brief WiFi SSID configuration key
-inline const char *WIFI_SSID_KEY = "wifi_ssid";
-
-/// @brief WiFi password configuration key
-inline const char *WIFI_PASSWORD_KEY = "wifi_password";
-
-/// @brief Library base URL configuration key
-inline const char *LIBRARY_BASE_URL_KEY = "library_base_url";
 
 /// @brief The Configuration subsystem
 /// @details Interface for configuration management functionality.
@@ -20,7 +13,8 @@ inline const char *LIBRARY_BASE_URL_KEY = "library_base_url";
 /// Provides an abstract interface for configuration operations.
 struct IConfig {
   public:
-    IConfig(ILogging &logger) : logger(logger) {
+    IConfig(ILogging &logger, IConfigUi &configUi)
+        : logger(logger), configUi(configUi) {
     }
 
     /// @brief Virtual destructor for proper cleanup of derived classes.
@@ -37,13 +31,6 @@ struct IConfig {
     /// @param value The value to associate with the specified key.
     virtual void set(const char *key, const char *value) = 0;
 
-    /// @brief Prompts the user for input with a message and a default value.
-    /// @param message The message to display to the user.
-    /// @param default_value The default value to use if the user no input.
-    /// @return The user's input or the default value if no input was given.
-    virtual auto prompt(const std::string &message,
-                        const std::string &default_value) -> std::string = 0;
-
     /// @brief Retrieves the current configuration values.
     /// @return A map containing the current configuration key-value pairs.
     virtual auto getAll() -> std::map<std::string, std::string> = 0;
@@ -51,6 +38,10 @@ struct IConfig {
     /// @brief Clears all configuration settings.
     virtual void clear() = 0;
 
+    /// @brief Main loop for the configuration subsystem.
+    virtual void tick() = 0;
+
   protected:
     ILogging &logger;
+    IConfigUi &configUi;
 };

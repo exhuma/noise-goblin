@@ -68,7 +68,7 @@ class Esp32Ui : public IUserInterface {
             eventLoop.postEvent(EVENT_PLAY_BUTTON_PRESSED);
             delay(200);
         }
-        switch (ledState) {
+        switch (appState) {
         case AppState::RequestingConfig:
             strip.setPixelColor(0, strip.Color(0, 0, 255));
             break;
@@ -78,7 +78,7 @@ class Esp32Ui : public IUserInterface {
         case AppState::Connecting:
             strip.setPixelColor(0, strip.Color(255, 165, 0));
             break;
-        case AppState::NoNetwork
+        case AppState::NoNetwork:
             strip.setPixelColor(0, strip.Color(255, 0, 0));
             break;
         }
@@ -86,6 +86,6 @@ class Esp32Ui : public IUserInterface {
     }
 
     void setState(AppState state) override {
-        ledState = state;
+        appState = state;
     }
 };

@@ -7,6 +7,7 @@
  */
 #include <cstdio>
 #include <cstring>
+#include <map>
 #include <string>
 #include "app.hpp"
 
@@ -14,6 +15,7 @@
 #if defined(BUILD_ESP32)
     #include "platforms/esp32/audio_impl.cpp"
     #include "platforms/esp32/config_impl.cpp"
+    #include "platforms/esp32/config_ui.cpp"
     #include "platforms/esp32/event_loop_impl.cpp"
     #include "platforms/esp32/http_impl.cpp"
     #include "platforms/esp32/library_impl.cpp"
@@ -22,15 +24,17 @@
     #include "platforms/esp32/wifi_impl.cpp"
 Esp32EventLoop eventLoop;
 Esp32Logging logging;
+Esp32ConfigUi configUi(logging);
 Esp32Wifi wifi(logging);
 Esp32Audio audio(logging);
-Esp32Config config(logging);
+Esp32Config config(logging, configUi);
 Esp32Ui ui(logging, eventLoop);
 Esp32Http http(logging);
 Esp32Library library(logging, http, config);
 #else
     #include "platforms/posix/audio_impl.cpp"
     #include "platforms/posix/config_impl.cpp"
+    #include "platforms/posix/config_ui.cpp"
     #include "platforms/posix/event_loop_impl.cpp"
     #include "platforms/posix/http_impl.cpp"
     #include "platforms/posix/library_impl.cpp"
@@ -39,15 +43,16 @@ Esp32Library library(logging, http, config);
     #include "platforms/posix/wifi_impl.cpp"
 PosixEventLoop eventLoop;
 PosixLogging logging;
+PosixConfigUi configUi(logging);
 PosixWifi wifi(logging);
 PosixAudio audio(logging);
-PosixConfig config(logging);
+PosixConfig config(logging, configUi);
 PosixUserInterface ui(logging, eventLoop);
 PosixHttp http(logging);
 PosixLibrary library(logging, http, config);
 #endif
 
-Application app(config, wifi, logging, audio, ui, eventLoop, library);
+Application app(config, wifi, logging, audio, ui, eventLoop, library, configUi);
 
 // The Arduino entry-point for "run-once" initialisations.
 void setup() {
