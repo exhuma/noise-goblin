@@ -52,4 +52,5 @@ class Application {
     IEventLoop &eventLoop;
     ILibrary &library;
     AppState currentState;
+    std::map<std::string, std::string> configBackup;
 };

@@ -70,21 +70,6 @@ static auto save_config(ILogging &logger) -> bool {
     return true;
 }
 
-static void request_config(IConfig &config) {
-    std::string ssid;
-    std::string password;
-    std::string library_base_url;
-    std::cout << "Enter WiFi SSID: ";
-    std::getline(std::cin, ssid);
-    std::cout << "Enter WiFi Password: ";
-    std::getline(std::cin, password);
-    std::cout << "Enter Library Base URL: ";
-    std::getline(std::cin, library_base_url);
-    config.set(WIFI_SSID_KEY, ssid.c_str());
-    config.set(WIFI_PASSWORD_KEY, password.c_str());
-    config.set(LIBRARY_BASE_URL_KEY, library_base_url.c_str());
-}
-
 class PosixConfig : public IConfig {
   public:
     PosixConfig(ILogging &logger) : IConfig(logger) {
@@ -117,9 +102,18 @@ class PosixConfig : public IConfig {
         save_config(logger);
     }
 
-    auto tick() -> bool override {
-        request_config(*this);  // <- blocking
-        return true;
+    auto prompt(const std::string &message, const std::string &default_value)
+        -> std::string override {
+        std::string input;
+        std::cout << message << " [default: " << default_value << "]: ";
+        std::getline(std::cin, input);
+        return input.empty() ? default_value : input;
+    }
+
+    auto getAll() -> std::map<std::string, std::string> override {
+        load_config();
+        std::lock_guard<std::mutex> lk(g_mutex);
+        return g_config;
     }
 
     void clear() override {

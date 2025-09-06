@@ -27,6 +27,7 @@ void Application::setup() {
         switch (event) {
         case EVENT_RESET_BUTTON_PRESSED:
             logger.debug("Reset button pressed event received");
+            configBackup = config.getAll();
             config.clear();
             break;
         case EVENT_PLAY_BUTTON_PRESSED:
@@ -44,6 +45,7 @@ void Application::setup() {
 }
 
 void Application::loop() {
+    std::map<std::string, std::string> values;
     currentState = computeState();  // TODO replace with an event-handling
                                     // system using the ESP32 event loop
     ui.tick();
@@ -51,7 +53,30 @@ void Application::loop() {
     switch (currentState) {
     case RequestingConfig:
     default:
-        config.tick();
+        values = config.getAll();
+        if (values[WIFI_SSID_KEY].empty()) {
+            config.set(
+                WIFI_SSID_KEY,
+                config.prompt("Enter WiFi SSID", configBackup[WIFI_SSID_KEY])
+                    .c_str());
+            return;  // liberate the loop
+        }
+        if (values[WIFI_PASSWORD_KEY].empty()) {
+            config.set(WIFI_PASSWORD_KEY,
+                       config
+                           .prompt("Enter WiFi Password",
+                                   configBackup[WIFI_PASSWORD_KEY])
+                           .c_str());
+            return;  // liberate the loop
+        }
+        if (values[LIBRARY_BASE_URL_KEY].empty()) {
+            config.set(LIBRARY_BASE_URL_KEY,
+                       config
+                           .prompt("Enter Library Base URL",
+                                   configBackup[LIBRARY_BASE_URL_KEY])
+                           .c_str());
+            return;  // liberate the loop
+        }
         break;
     case NoNetwork:
         wifi.tick();
