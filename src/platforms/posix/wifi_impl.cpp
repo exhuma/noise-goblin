@@ -1,10 +1,13 @@
+#include <chrono>
 #include "../logging.hpp"
 #include "../wifi.hpp"
 
 class PosixWifi : public IWifi {
   public:
     PosixWifi(ILogging &logger) : IWifi{logger} {
+        startupTime = std::chrono::system_clock::now();
     }
+
     void setup() override {
         logger.info("Resetting WiFi");
     }
@@ -15,29 +18,14 @@ class PosixWifi : public IWifi {
     }
 
     void tick() override {
-        // We only simulate state-changes for 100 iterations. This is just to
-        // avoid running into overflows if the application runs for an extended
-        // period of time. Not really necessary but it keeps things simple for
-        // testing
-        if (tickCount < 100) {
-            tickCount++;
-        }
     }
 
     auto isConnected() -> bool override {
-        // Simulate a connection that interrupts for a few seconds.
-        if (tickCount <= 5) {
-            return false;
-        }
-        if (tickCount <= 10) {
-            return true;
-        }
-        if (tickCount <= 15) {
-            return false;
-        }
-        return true;
+        // We are connected if the application is running for 5 seconds
+        return (std::chrono::system_clock::now() - startupTime) >
+               std::chrono::seconds(5);
     }
 
   private:
-    int tickCount = 0;
+    std::chrono::system_clock::time_point startupTime;
 };

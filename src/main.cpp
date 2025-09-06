@@ -69,6 +69,7 @@ auto main() -> int {
     setup();
     while (true) {
         loop();
+        sleep(0.1);
     }
     return 0;
 }

@@ -2,6 +2,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <cstdlib>
+#include <iostream>
 #include <string>
 #include "../../enum.hpp"
 #include "../logging.hpp"
@@ -29,6 +30,13 @@ static void restoreTerminalMode() {
     tcsetattr(STDIN_FILENO, TCSANOW, &t);
 }
 
+static auto rpad(const std::string &str, std::size_t width) -> std::string {
+    if (str.size() < width) {
+        return str + std::string(width - str.size(), ' ');
+    }
+    return str;
+}
+
 class PosixUserInterface : public IUserInterface {
   public:
     PosixUserInterface(ILogging &logger, IEventLoop &eventLoop)
@@ -41,23 +49,10 @@ class PosixUserInterface : public IUserInterface {
     }
 
     void tick() override {
-        switch (appState) {
-        default:
-            logger.info("App State: Unknown");
-            break;
-        case AppState::Normal:
-            logger.info("App State: Normal");
-            break;
-        case AppState::RequestingConfig:
-            logger.info("App State: Requesting Config");
-            break;
-        case AppState::Connecting:
-            logger.info("App State: Connecting");
-            break;
-        case AppState::NoNetwork:
-            logger.info("App State: No Network");
-            break;
-        }
+        std::cout << "\rApp State: " << rpad(appStateToString(appState), 80)
+                  << std::flush;
+
+        // Handle key-presses
         setNonCanonicalMode();
         if (isKeyPressed()) {
             char c;
@@ -69,7 +64,6 @@ class PosixUserInterface : public IUserInterface {
             }
         }
         restoreTerminalMode();
-        sleep(1);
     }
 
     void setState(AppState state) override {

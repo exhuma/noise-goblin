@@ -14,31 +14,19 @@ static auto timestamp() -> std::string {
 }
 
 class PosixLogging : public ILogging {
+    // NOTE: The functions have been defused (implementation removed) in favour
+    // of a more "interactive" CLI ui for testing using proper events to better
+    // represent the execution mode on the ESP32 (main-loop).
     void debug(const char *fmt, ...) override {
-        va_list args;
-        va_start(args, fmt);
-        std::cout << "[" << timestamp() << "] [DEBUG] ";
-        vfprintf(stdout, fmt, args);
-        std::cout << std::endl;
-        va_end(args);
+        // no-op
     }
 
     void info(const char *fmt, ...) override {
-        va_list args;
-        va_start(args, fmt);
-        std::cout << "[" << timestamp() << "] [INFO ] ";
-        vfprintf(stdout, fmt, args);
-        std::cout << std::endl;
-        va_end(args);
+        // no-op
     }
 
     void error(const char *fmt, ...) override {
-        va_list args;
-        va_start(args, fmt);
-        std::cerr << "[" << timestamp() << "] [ERROR] ";
-        vfprintf(stderr, fmt, args);
-        std::cerr << std::endl;
-        va_end(args);
+        // no-op
     }
 
     void setup() override {
