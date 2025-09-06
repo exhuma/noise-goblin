@@ -37,6 +37,12 @@ void Application::setup() {
             url = library.getRandomSound();
             audio.play(url);
             break;
+        case SOUND_PLAY_STARTED:
+            currentState = AppState::PlayingSound;
+            break;
+        case SOUND_PLAY_STOPPED:
+            currentState = AppState::Normal;
+            break;
         default:
             logger.error("Unknown event received: %d", event);
             break;
@@ -93,6 +99,9 @@ void Application::loop() {
 }
 
 auto Application::computeState() -> AppState {
+    if (currentState == AppState::PlayingSound) {
+        return AppState::PlayingSound;
+    }
     std::string ssid = config.get(WIFI_SSID_KEY);
     std::string password = config.get(WIFI_PASSWORD_KEY);
     std::string library_base_url = config.get(LIBRARY_BASE_URL_KEY);

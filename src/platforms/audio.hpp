@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "eventLoop.hpp"
 #include "logging.hpp"
 
 /// @brief The Audio subsystem
@@ -7,7 +8,8 @@
 ///
 /// Provides an abstract interface for audio operations.
 struct IAudio {
-    IAudio(ILogging &logger) : logger(logger) {
+    IAudio(ILogging &logger, IEventLoop &eventLoop)
+        : logger(logger), eventLoop(eventLoop) {
     }
 
     /// @brief Virtual destructor for proper cleanup of derived classes.
@@ -25,4 +27,5 @@ struct IAudio {
 
   protected:
     ILogging &logger;
+    IEventLoop &eventLoop;
 };

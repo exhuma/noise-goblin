@@ -15,6 +15,12 @@ inline const int EVENT_PLAY_BUTTON_PRESSED = 1;
 /// @brief Reset button pressed event
 inline const int EVENT_RESET_BUTTON_PRESSED = 2;
 
+/// @brief A sound has started playing
+inline const int SOUND_PLAY_STARTED = 3;
+
+/// @brief A sound has stopped playing
+inline const int SOUND_PLAY_STOPPED = 4;
+
 /// @brief The Event-Loop subsystem
 /// @details Interface for event loop functionality.
 ///
