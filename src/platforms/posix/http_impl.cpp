@@ -1,25 +1,30 @@
+#include <iostream>
+#include <istream>
+#include <string>
 #include <vector>
+
+#include "../../util.hpp"
 #include "../http.hpp"
 #include "curl/curl.h"
 #include "nlohmann/json.hpp"
 
 class PosixHttp : public IHttp {
   public:
-    PosixHttp(ILogging& logger) : IHttp(logger) {
+    PosixHttp(ILogging &logger) : IHttp(logger) {
     }
     auto getResourceNames(std::string url)
         -> std::vector<std::string> override {
         logger.info("Fetching document from URL: %s", url.c_str());
-        CURL* curl = curl_easy_init();
+        CURL *curl = curl_easy_init();
         std::vector<std::string> resourceNames;
         if (curl) {
             std::string response;
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
             curl_easy_setopt(
                 curl, CURLOPT_WRITEFUNCTION,
-                +[](char* ptr, size_t size, size_t nmemb,
-                    void* userdata) -> size_t {
-                    auto& resp = *static_cast<std::string*>(userdata);
+                +[](char *ptr, size_t size, size_t nmemb,
+                    void *userdata) -> size_t {
+                    auto &resp = *static_cast<std::string *>(userdata);
                     resp.append(ptr, size * nmemb);
                     return size * nmemb;
                 });
@@ -29,21 +34,23 @@ class PosixHttp : public IHttp {
             curl_easy_cleanup(curl);
 
             if (res == CURLE_OK) {
-                // Parse JSON response
+                std::istringstream iss(response);
                 try {
-                    // Assuming nlohmann/json is available
-                    auto json = nlohmann::json::parse(response);
-                    if (json.contains("jingles") &&
-                        json["jingles"].is_array()) {
-                        for (const auto& item : json["jingles"]) {
-                            if (item.contains("resource_str") &&
-                                item["resource_str"].is_string()) {
+                    collectResources(iss, [&resourceNames](
+                                              const std::string &jsonString) {
+                        try {
+                            auto jsonObj = nlohmann::json::parse(jsonString);
+                            if (jsonObj.contains("resource_str") &&
+                                jsonObj["resource_str"].is_string()) {
                                 resourceNames.push_back(
-                                    item["resource_str"].get<std::string>());
+                                    jsonObj["resource_str"].get<std::string>());
                             }
+                        } catch (const std::exception &e) {
+                            std::cerr << "JSON parse error: " << e.what()
+                                      << "\n";
                         }
-                    }
-                } catch (const std::exception& e) {
+                    });
+                } catch (const std::exception &e) {
                     logger.error("JSON parse error: %s", e.what());
                 }
             } else {
