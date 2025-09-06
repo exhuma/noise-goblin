@@ -2,9 +2,11 @@
 #include "../logging.hpp"
 #include "Arduino.h"
 
+#define MAX_LOG_SIZE 512
+
 class Esp32Logging : public ILogging {
     void debug(const char *fmt, ...) override {
-        std::array<char, 128> msg;
+        std::array<char, MAX_LOG_SIZE> msg;
         va_list args;
         va_start(args, fmt);
         vsnprintf(msg.data(), msg.size(), fmt, args);
@@ -14,7 +16,7 @@ class Esp32Logging : public ILogging {
     }
 
     void info(const char *fmt, ...) override {
-        std::array<char, 128> msg;
+        std::array<char, MAX_LOG_SIZE> msg;
         va_list args;
         va_start(args, fmt);
         vsnprintf(msg.data(), msg.size(), fmt, args);
@@ -24,7 +26,7 @@ class Esp32Logging : public ILogging {
     }
 
     void error(const char *fmt, ...) override {
-        std::array<char, 128> msg;
+        std::array<char, MAX_LOG_SIZE> msg;
         va_list args;
         va_start(args, fmt);
         vsnprintf(msg.data(), msg.size(), fmt, args);
