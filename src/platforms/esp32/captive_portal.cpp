@@ -108,7 +108,7 @@ void start_captive_portal(IConfig& config, ILogging& logger) {
     // Serve the main page for all GET requests
     server.onNotFound([&logger]() {
         if (server.method() == HTTP_GET) {
-            logger.debug("Redirecting ", server.uri(), " to root page");
+            logger.debug("Redirecting %s to root page", server.uri());
             handleRoot();
         } else {
             logger.info("404 - Not Found: %s", server.uri());
