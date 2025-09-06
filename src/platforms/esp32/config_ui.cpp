@@ -8,9 +8,11 @@
 #include <WebServer.h>
 #include <WiFi.h>
 #include <map>
+#include <string>
 #include "../../const.hpp"
 
-static const String ROOT_PAGE =
+// TODO: These HTML files should be moved to a template-file
+static const std::string ROOT_PAGE =
     "<!DOCTYPE html><html><head>"
     "<meta name=\"viewport\" content=\"width=device-width, "
     "initial-scale=1\">"
@@ -32,11 +34,17 @@ static const String ROOT_PAGE =
     "<h2>Initial Setup</h2>"
     "<form action=\"/save\" method=\"POST\">"
     "Wifi SSID: <input type=\"text\" name=\"ssid\" placeholder=\"Enter "
-    "SSID\"><br>"
-    "Wifi Password: <input type=\"password\" name=\"password\" "
-    "placeholder=\"Enter Password\"><br>"
+    "SSID\" value=\"{" +
+    std::string(WIFI_SSID_KEY) +
+    "}\"><br>"
+    "Wifi Password: <input type=\"text\" name=\"password\" "
+    "placeholder=\"Enter Password\" value=\"{" +
+    std::string(WIFI_PASSWORD_KEY) +
+    "}\"><br>"
     "Library URL: <input type=\"text\" name=\"library_url\" "
-    "placeholder=\"https://example.com/library\"><br>"
+    "placeholder=\"https://example.com/library\" value=\"{" +
+    std::string(LIBRARY_BASE_URL_KEY) +
+    "}\"><br>"
     "<input type=\"submit\" value=\"Save\">"
     "</form>"
     "</body></html>";
@@ -123,7 +131,15 @@ class Esp32ConfigUi : public IConfigUi {
     const char* apPassword = "12345678";
 
     void handleRoot() {
-        webServer.send(200, "text/html", ROOT_PAGE);
+        std::string page = ROOT_PAGE;
+        for (const auto& [key, value] : defaults) {
+            std::string placeholder = "{" + key + "}";
+            size_t pos = page.find(placeholder);
+            if (pos != std::string::npos) {
+                page.replace(pos, placeholder.length(), value);
+            }
+        }
+        webServer.send(200, "text/html", String(page.c_str()));
     }
 
     void handleSave() {
