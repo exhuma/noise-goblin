@@ -1,4 +1,3 @@
-#include <mutex>
 #include <string>
 #include "../audio.hpp"
 #include "Audio.h"
@@ -20,20 +19,14 @@ class Esp32Audio : public IAudio {
 
     void play(std::string url) override {
         logger.debug("Playing %s", url.c_str());
-        {
-            std::lock_guard<std::mutex> lock(urlMutex);
-            currentUrl = url;
-        }
+        currentUrl = url;
     }
 
     void tick() override {
         if (!currentUrl.empty()) {
             esp32_audio.stopSong();
             const bool success = esp32_audio.connecttohost(currentUrl.c_str());
-            {
-                std::lock_guard<std::mutex> lock(urlMutex);
-                currentUrl.clear();
-            }
+            currentUrl.clear();
             if (!success) {
                 logger.error("Failed to connect to host");
             }
@@ -42,6 +35,5 @@ class Esp32Audio : public IAudio {
     }
 
   private:
-    std::mutex urlMutex;
     std::string currentUrl;
 };

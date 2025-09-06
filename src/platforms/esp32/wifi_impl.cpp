@@ -24,11 +24,16 @@ class Esp32Wifi : public IWifi {
     }
 
     void tick() override {
+        const unsigned long retryDelay = 300;
+        const unsigned long currentTime = millis();
+        static unsigned long lastAttemptTime = 0;
         if (isConnecting && WiFi.status() != WL_CONNECTED) {
             if (remainingRetries > 0) {
                 logger.info("Wifi Connecting...");
-                delay(300);  // TODO replace with nonblocking RTC wait
-                remainingRetries--;
+                if (currentTime - lastAttemptTime > retryDelay) {
+                    lastAttemptTime = currentTime;
+                    remainingRetries--;
+                }
             } else if (remainingRetries == 0) {
                 logger.error("Wifi Connection Failed");
                 isConnecting = false;

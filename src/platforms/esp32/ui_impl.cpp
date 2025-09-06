@@ -56,17 +56,23 @@ class Esp32Ui : public IUserInterface {
     }
 
     void tick() override {
+        static unsigned long lastResetButtonPress = 0;
+        static unsigned long lastPlayButtonPress = 0;
+        const unsigned long debounceDelay = 200;
+        unsigned long currentTime = millis();
         std::array<char, 16> buffer;
         sprintf(buffer.data(), "%d", digitalRead(RESET_BUTTON));
-        if (digitalRead(RESET_BUTTON) == LOW) {
+        if (digitalRead(RESET_BUTTON) == LOW &&
+            (currentTime - lastResetButtonPress) > debounceDelay) {
+            lastResetButtonPress = currentTime;
             logger.debug("Reset button pressed");
             eventLoop.postEvent(EVENT_RESET_BUTTON_PRESSED);
-            delay(1000);
         }
-        if (digitalRead(PLAY_BUTTON) == LOW) {
+        if (digitalRead(PLAY_BUTTON) == LOW &&
+            (currentTime - lastPlayButtonPress) > debounceDelay) {
+            lastPlayButtonPress = currentTime;
             logger.debug("Play button pressed");
             eventLoop.postEvent(EVENT_PLAY_BUTTON_PRESSED);
-            delay(400);
         }
         switch (appState) {
         case AppState::RequestingConfig:
