@@ -25,7 +25,6 @@ void Application::setup() {
     wifi.setup();
     eventLoop.setup();
     eventLoop.setEventCallback([&](int event) {
-        std::string randomSound;
         std::string url;
         switch (event) {
         case EVENT_RESET_BUTTON_PRESSED:

@@ -17,7 +17,6 @@ class Esp32Library : public ILibrary {
         return baseUrl + "/" + url;
     }
 
-
     void tick() override {
         if (soundByteNames.size() == 0) {
             auto baseUrl = config.get(LIBRARY_BASE_URL_KEY);
