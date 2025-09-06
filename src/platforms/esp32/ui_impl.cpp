@@ -61,12 +61,12 @@ class Esp32Ui : public IUserInterface {
         if (digitalRead(RESET_BUTTON) == LOW) {
             logger.debug("Reset button pressed");
             eventLoop.postEvent(EVENT_RESET_BUTTON_PRESSED);
-            delay(200);
+            delay(1000);
         }
         if (digitalRead(PLAY_BUTTON) == LOW) {
             logger.debug("Play button pressed");
             eventLoop.postEvent(EVENT_PLAY_BUTTON_PRESSED);
-            delay(200);
+            delay(400);
         }
         switch (appState) {
         case AppState::RequestingConfig:

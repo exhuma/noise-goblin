@@ -20,14 +20,14 @@ class Esp32Wifi : public IWifi {
         logger.info("Connecting to WiFi: %s", ssid);
         WiFi.begin(ssid, password);
         isConnecting = true;
-        remainingRetries = 10;
+        remainingRetries = 20;
     }
 
     void tick() override {
         if (isConnecting && WiFi.status() != WL_CONNECTED) {
             if (remainingRetries > 0) {
                 logger.info("Wifi Connecting...");
-                delay(1000);  // TODO replace with nonblocking RTC wait
+                delay(300);  // TODO replace with nonblocking RTC wait
                 remainingRetries--;
             } else if (remainingRetries == 0) {
                 logger.error("Wifi Connection Failed");
