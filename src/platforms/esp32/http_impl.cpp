@@ -19,6 +19,8 @@ class Esp32Http : public IHttp {
 
         if (httpCode == HTTP_CODE_OK) {
             String payload = http.getString();
+            logger.debug("HTTP GET successful, payload length: %d",
+                        payload.length());
 
             // Parse JSON
             DynamicJsonDocument doc(200 * 1024);
@@ -34,7 +36,13 @@ class Esp32Http : public IHttp {
                         }
                     }
                 }
+            } else {
+                logger.error("Failed to parse JSON response");
+                logger.error("Deserialization error: %s", error.c_str());
             }
+        } else {
+            logger.error("HTTP GET failed, error: %s",
+                        http.errorToString(httpCode).c_str());
         }
 
         http.end();

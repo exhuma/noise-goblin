@@ -51,8 +51,8 @@ class Esp32Config : public IConfig {
         size_t required_size = 0;
         esp_err_t err = nvs_get_str(s_nvs_handle, key, nullptr, &required_size);
         if (err != ESP_OK || required_size == 0) {
-            logger.error("Error reading key: ", key,
-                         " not found, returning default.");
+            // logger.error("Error reading key: %s not found, returning
+            // default.", key);
             return {};
         }
         std::string value;

@@ -17,9 +17,14 @@ class Esp32Library : public ILibrary {
         return baseUrl + "/" + url;
     }
 
+
     void tick() override {
         if (soundByteNames.size() == 0) {
             auto baseUrl = config.get(LIBRARY_BASE_URL_KEY);
+            if (baseUrl.empty()) {
+                logger.debug("No library base URL configured");
+                return;
+            }
             logger.info("Loading sounds from %s", baseUrl.c_str());
             auto response = http.getResourceNames(baseUrl);
             for (const auto &name : response) {
@@ -27,7 +32,5 @@ class Esp32Library : public ILibrary {
             }
             soundByteNames = std::move(response);
         }
-        logger.debug("Library tick: %zu sounds available",
-                     soundByteNames.size());
     }
 };
