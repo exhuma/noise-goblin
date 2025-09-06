@@ -69,7 +69,7 @@ auto main() -> int {
     setup();
     while (true) {
         loop();
-        sleep(0.1);
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
     return 0;
 }

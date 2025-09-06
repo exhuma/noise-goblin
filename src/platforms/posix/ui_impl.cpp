@@ -49,8 +49,18 @@ class PosixUserInterface : public IUserInterface {
     }
 
     void tick() override {
-        std::cout << "\rApp State: " << rpad(appStateToString(appState), 80)
+        // Braille spinner characters encoded as UTF-8
+        static const std::array<const char *, 10> spinner = {
+            u8"\u280B", u8"\u2819", u8"\u2839", u8"\u2838", u8"\u283C",
+            u8"\u2834", u8"\u2826", u8"\u2827", u8"\u2807", u8"\u280F"};
+        static const std::size_t spinnerSize =
+            sizeof(spinner) / sizeof(spinner[0]);
+        static std::size_t spinnerIndex = 0;
+        std::cout << "\r" << spinner[spinnerIndex % spinnerSize]
+                  << " App State: " << rpad(appStateToString(appState), 50)
                   << std::flush;
+
+        spinnerIndex = (spinnerIndex + 1) % spinner.size();
 
         // Handle key-presses
         setNonCanonicalMode();
