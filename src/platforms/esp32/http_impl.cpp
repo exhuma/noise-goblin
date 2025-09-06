@@ -13,6 +13,7 @@ class Esp32Http : public IHttp {
 
         // Create HTTP client
         HTTPClient http;
+        http.setUserAgent("noise-goblin/0.1");
         http.begin(url.c_str());
         int httpCode = http.GET();
 
