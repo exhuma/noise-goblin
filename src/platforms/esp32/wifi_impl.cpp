@@ -15,34 +15,36 @@ class Esp32Wifi : public IWifi {
     }
 
     void connect(const char *ssid, const char *password) override {
-        if (isConnecting || isConnected()) {
-            logger.info("Already connected or connecting to WiFi");
-            return;
-        }
-        logger.info("Connecting to WiFi: %s", ssid);
-        WiFi.begin(ssid, password);
-        isConnecting = true;
+        logger.info("Connecting to WiFi with SSID %s %s", ssid);
+        newConnectionRequested = true;
         remainingRetries = 20;
+        eventLoop.postEvent(EVENT_WIFI_CONNECTING);
     }
 
     void tick() override {
-        const unsigned long retryDelay = 300;
+        if (!newConnectionRequested) {
+            return;
+        }
+
+        const unsigned long retryDelay = 1000;
         const unsigned long currentTime = millis();
         static unsigned long lastAttemptTime = 0;
-        if (isConnecting && WiFi.status() != WL_CONNECTED) {
-            if (remainingRetries > 0) {
-                logger.info("Wifi Connecting...");
-                if (currentTime - lastAttemptTime > retryDelay) {
-                    lastAttemptTime = currentTime;
-                    remainingRetries--;
-                }
+
+        if (currentTime - lastAttemptTime > retryDelay) {
+            lastAttemptTime = currentTime;
+            if (isConnected()) {
+                logger.info("WiFi connected with IP: %s",
+                            WiFi.localIP().toString().c_str());
+                eventLoop.postEvent(EVENT_WIFI_CONNECTED);
+                newConnectionRequested = false;
+            } else if (newConnectionRequested) {
+                logger.info("Retrying connection...");
+                WiFi.reconnect();
+                remainingRetries--;
             } else if (remainingRetries == 0) {
-                logger.error("Wifi Connection Failed");
-                isConnecting = false;
+                logger.info("WiFi connection failed");
+                eventLoop.postEvent(EVENT_WIFI_FAILED);
             }
-            logger.info("Connected with IP: %s",
-                        WiFi.localIP().toString().c_str());
-            return;
         }
     }
 
@@ -51,6 +53,6 @@ class Esp32Wifi : public IWifi {
     }
 
   private:
-    bool isConnecting = false;
+    bool newConnectionRequested = false;
     int remainingRetries = 0;
 };

@@ -27,6 +27,9 @@ inline const int EVENT_WIFI_CONNECTING = 5;
 /// @brief A new network connection was established
 inline const int EVENT_WIFI_CONNECTED = 6;
 
+/// @brief Network connection failed
+inline const int EVENT_WIFI_FAILED = 7;
+
 /// @brief The Event-Loop subsystem
 /// @details Interface for event loop functionality.
 ///
