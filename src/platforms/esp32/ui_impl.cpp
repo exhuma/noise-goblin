@@ -55,7 +55,7 @@ class Esp32Ui : public IUserInterface {
         logger.debug("UI Setup complete");
     }
 
-    void tick() override {
+    void tick(AppState state) override {
         static unsigned long lastResetButtonPress = 0;
         static unsigned long lastPlayButtonPress = 0;
         const unsigned long debounceDelay = 200;
@@ -74,7 +74,7 @@ class Esp32Ui : public IUserInterface {
             logger.debug("Play button pressed");
             eventLoop.postEvent(EVENT_PLAY_BUTTON_PRESSED);
         }
-        switch (appState) {
+        switch (state) {
         case AppState::RequestingConfig:
             strip.setPixelColor(0, strip.Color(0, 0, 255));
             break;

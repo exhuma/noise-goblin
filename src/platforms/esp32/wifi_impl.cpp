@@ -1,9 +1,11 @@
+#include "../eventLoop.hpp"
 #include "../wifi.hpp"
 #include "WiFi.h"
 
 class Esp32Wifi : public IWifi {
   public:
-    Esp32Wifi(ILogging &logger) : IWifi(logger) {
+    Esp32Wifi(ILogging &logger, IEventLoop &eventLoop)
+        : IWifi(logger, eventLoop) {
     }
 
     void setup() override {

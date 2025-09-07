@@ -25,7 +25,7 @@
 Esp32EventLoop eventLoop;
 Esp32Logging logging;
 Esp32ConfigUi configUi(logging);
-Esp32Wifi wifi(logging);
+Esp32Wifi wifi(logging, eventLoop);
 Esp32Audio audio(logging, eventLoop);
 Esp32Config config(logging, configUi);
 Esp32Ui ui(logging, eventLoop);

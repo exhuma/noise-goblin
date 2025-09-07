@@ -1,12 +1,14 @@
 #include <string>
 #include "../audio.hpp"
+#include "../eventLoop.hpp"
 #include "Audio.h"
 
 static Audio esp32_audio;
 
 class Esp32Audio : public IAudio {
   public:
-    Esp32Audio(ILogging &logger) : IAudio(logger) {
+    Esp32Audio(ILogging &logger, IEventLoop &eventLoop)
+        : IAudio(logger, eventLoop) {
     }
     void setup() override {
         esp32_audio.setPinout(17,  // I2S_BCLK
