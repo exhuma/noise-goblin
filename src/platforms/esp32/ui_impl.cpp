@@ -1,15 +1,34 @@
+#include <Adafruit_GFX.h>
 #include <Adafruit_NeoPixel.h>
+#include <Adafruit_SSD1306.h>
+#include <SPI.h>
+#include <Wire.h>
 #include "../../enum.hpp"
 #include "../ui.hpp"
 #include "Arduino.h"
 
-#define RESET_BUTTON 4  // GPIO4
-#define PLAY_BUTTON 5   // GPIO5
+#define SCREEN_WIDTH 128  // OLED display width, in pixels
+#define SCREEN_HEIGHT 64  // OLED display height, in pixels
+#define RESET_BUTTON 4    // GPIO4
+#define PLAY_BUTTON 5     // GPIO5
+#define SCL_PIN 6
+#define SDA_PIN 7
 #define RGB_LED 48
 #define NUM_LEDS 1
 
+static Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 static Adafruit_NeoPixel strip =
     Adafruit_NeoPixel(NUM_LEDS, RGB_LED, NEO_GRB + NEO_KHZ800);
+
+static void displayMessage(Adafruit_SSD1306 &display, std::string message) {
+    display.clearDisplay();
+    display.setTextSize(1);       // Normal 1:1 pixel scale
+    display.setTextColor(WHITE);  // Draw white text
+    display.setCursor(0, 0);      // Start at top-left corner
+    display.cp437(true);          // Use full 256 char 'Code Page 437' font
+    display.println(message.c_str());
+    display.display();
+}
 
 /**
  * Blink the RGB LED several times in red without blocking
@@ -52,6 +71,14 @@ class Esp32Ui : public IUserInterface {
         strip.begin();
         strip.show();
         strip.setBrightness(5);
+
+        Wire.begin(SDA_PIN, SCL_PIN);
+        // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+        if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+            logger.error("SSD1306 allocation failed");
+        }
+        display.clearDisplay();
+
         logger.debug("UI Setup complete");
     }
 
@@ -74,17 +101,28 @@ class Esp32Ui : public IUserInterface {
             logger.debug("Play button pressed");
             eventLoop.postEvent(EVENT_PLAY_BUTTON_PRESSED);
         }
+        std::string message;
         switch (state) {
         case AppState::RequestingConfig:
             strip.setPixelColor(0, strip.Color(0, 0, 255));
+            message = "Requesting Config";
             break;
         case AppState::Normal:
             strip.setPixelColor(0, strip.Color(0, 255, 0));
+            message = "Normal";
             break;
         case AppState::Connecting:
             strip.setPixelColor(0, strip.Color(255, 165, 0));
+            message = "Connecting";
             break;
         }
         strip.show();
+        if (currentMessage != message) {
+            currentMessage = message;
+            displayMessage(display, currentMessage);
+        }
     }
+
+  private:
+    std::string currentMessage;
 };
