@@ -6,6 +6,9 @@
 #include "../../enum.hpp"
 #include "../ui.hpp"
 #include "Arduino.h"
+#include "esp_heap_caps.h"
+#include "esp_system.h"
+#include "stdio.h"
 
 #define SCREEN_WIDTH 128  // OLED display width, in pixels
 #define SCREEN_HEIGHT 64  // OLED display height, in pixels
@@ -58,6 +61,33 @@ static void _blink_strip() {
     }
 }
 
+static std::string niceSize(unsigned size) {
+    static char buffer[20];
+    if (size < 1024) {
+        sprintf(buffer, "%uB", size);
+    } else if (size < 1024 * 1024) {
+        sprintf(buffer, "%.2fKB", size / 1024.0);
+    } else {
+        sprintf(buffer, "%.2fMB", size / (1024.0 * 1024.0));
+    }
+    return std::string(buffer);
+}
+
+static std::string progressBarText(unsigned progress, unsigned width) {
+    unsigned pos = width * progress / 100;
+    std::string bar =
+        "[" + std::string(pos, '#') + std::string(width - pos, '-') + "]";
+    return bar;
+}
+
+static void drawProgressBar(unsigned progress, unsigned int posX,
+                            unsigned int postY, unsigned int width,
+                            unsigned int height) {
+    display.drawRect(posX, postY + 1, width, height - 2, WHITE);
+    display.fillRect(posX + 1, postY + 1 + 1, (width - 2) * progress / 100,
+                     height - 4, WHITE);
+}
+
 class Esp32Ui : public IUserInterface {
   public:
     Esp32Ui(ILogging &logger, IEventLoop &eventLoop)
@@ -82,6 +112,62 @@ class Esp32Ui : public IUserInterface {
         logger.debug("UI Setup complete");
     }
 
+    void updateMemStats(AppState state) {
+        if (millis() - lastMessageUpdate < 20) {
+            return;
+        }
+        lastMessageUpdate = millis();
+        size_t free_heap = heap_caps_get_free_size(MALLOC_CAP_8BIT);
+        size_t min_free_heap = esp_get_minimum_free_heap_size();
+        size_t total_heap = heap_caps_get_total_size(MALLOC_CAP_8BIT);
+        size_t largest_block =
+            heap_caps_get_largest_free_block(MALLOC_CAP_8BIT);
+
+        float fragmentation =
+            (1.0f - (float)largest_block / (float)free_heap) * 100.0f;
+        float heapPct =
+            (float)(total_heap - free_heap) / (float)total_heap * 100.0f;
+
+        display.clearDisplay();
+        display.setTextSize(1);       // Normal 1:1 pixel scale
+        display.setTextColor(WHITE);  // Draw white text
+        display.setCursor(0, 0);      // Start at top-left corner
+        display.cp437(true);          // Use full 256 char 'Code Page 437' font
+        display.println("=== Memory ===");
+        // [Text Display] display.printf("T. heap:     %s\n",
+        // [Text Display] niceSize((unsigned)total_heap).c_str());
+        // display.printf("F. heap: [Text Display] %s\n",
+        // niceSize((unsigned)free_heap).c_str());
+        display.printf("Frag.:\n");
+        drawProgressBar(fragmentation, 50, 8, 128 - 50, 8);
+        display.printf("Heap:\n");
+        drawProgressBar(heapPct, 50, 16, 128 - 50, 8);
+        display.printf("Min f. heap: %s (since boot)\n",
+                       niceSize((unsigned)min_free_heap).c_str());
+        display.printf("Lg block:    %s\n",
+                       niceSize((unsigned)largest_block).c_str());
+        display.display();
+    }
+
+    void updateLed(AppState state) {
+        if (millis() - lastLedUpdate < 500) {
+            return;
+        }
+        lastLedUpdate = millis();
+        switch (state) {
+        case AppState::RequestingConfig:
+            strip.setPixelColor(0, strip.Color(0, 0, 255));
+            break;
+        case AppState::Normal:
+            strip.setPixelColor(0, strip.Color(0, 255, 0));
+            break;
+        case AppState::Connecting:
+            strip.setPixelColor(0, strip.Color(255, 165, 0));
+            break;
+        }
+        strip.show();
+    }
+
     void tick(AppState state) override {
         static unsigned long lastResetButtonPress = 0;
         static unsigned long lastPlayButtonPress = 0;
@@ -101,28 +187,14 @@ class Esp32Ui : public IUserInterface {
             logger.debug("Play button pressed");
             eventLoop.postEvent(EVENT_PLAY_BUTTON_PRESSED);
         }
-        std::string message;
-        switch (state) {
-        case AppState::RequestingConfig:
-            strip.setPixelColor(0, strip.Color(0, 0, 255));
-            message = "Requesting Config";
-            break;
-        case AppState::Normal:
-            strip.setPixelColor(0, strip.Color(0, 255, 0));
-            message = "Normal";
-            break;
-        case AppState::Connecting:
-            strip.setPixelColor(0, strip.Color(255, 165, 0));
-            message = "Connecting";
-            break;
-        }
-        strip.show();
-        if (currentMessage != message) {
-            currentMessage = message;
-            displayMessage(display, currentMessage);
-        }
+        updateLed(state);
+        updateMemStats(state);
     }
 
   private:
     std::string currentMessage;
+    int loops = 0;
+    unsigned long lastLoopUpdate = 0;
+    unsigned long lastMessageUpdate = 0;
+    unsigned long lastLedUpdate = 0;
 };
