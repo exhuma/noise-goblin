@@ -14,7 +14,13 @@ class Esp32Library : public ILibrary {
         auto url = soundByteNames[index];
         auto baseUrl =
             config.get(LIBRARY_BASE_URL_KEY);  // TODO: We could cache this
-        return baseUrl + "/" + url;
+        static thread_local std::string urlBuffer;
+        urlBuffer.clear();
+        urlBuffer.reserve(baseUrl.size() + 1 + url.size());
+        urlBuffer.append(baseUrl);
+        urlBuffer.push_back('/');
+        urlBuffer.append(url);
+        return std::string(urlBuffer);
     }
 
     void tick() override {

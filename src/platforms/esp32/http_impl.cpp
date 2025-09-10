@@ -53,7 +53,7 @@ class Esp32Http : public IHttp {
             auto client = http.getStreamPtr();
             collectResources(client, [&](const std::string& jsonString) {
                 try {
-                    DynamicJsonDocument doc(1024);
+                    DynamicJsonDocument doc(512);
                     DeserializationError error =
                         deserializeJson(doc, jsonString);
                     if (!error) {
