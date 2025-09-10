@@ -9,6 +9,10 @@ class Esp32Library : public ILibrary {
 
     auto getRandomSound() -> std::string override {
         logger.info("Getting random sound");
+        if (soundByteNames.empty()) {
+            logger.info("No sound bytes available");
+            return "";
+        }
         srand(static_cast<unsigned int>(time(nullptr)));
         int index = rand() % 100;
         auto url = soundByteNames[index];

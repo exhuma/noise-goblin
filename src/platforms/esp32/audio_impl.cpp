@@ -20,6 +20,10 @@ class Esp32Audio : public IAudio {
     }
 
     void play(std::string url) override {
+        if (url.empty()) {
+            logger.error("No URL provided to play. Ignoring.");
+            return;
+        }
         logger.debug("Playing %s", url.c_str());
         currentUrl = url;
     }
