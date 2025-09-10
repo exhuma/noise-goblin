@@ -34,34 +34,6 @@ static void displayMessage(Adafruit_SSD1306 &display, std::string message) {
     display.display();
 }
 
-/**
- * Blink the RGB LED several times in red without blocking
- */
-static void _blink_strip() {
-    static unsigned long lastBlinkTime = 0;
-    static int blinkState = 0;
-    static int blinkCount = 0;
-
-    unsigned long currentTime = millis();
-
-    if (blinkCount < 3) {
-        if (blinkState == 0 && currentTime - lastBlinkTime >= 200) {
-            strip.setPixelColor(0, strip.Color(255, 0, 0));  // Red
-            strip.show();
-            lastBlinkTime = currentTime;
-            blinkState = 1;
-        } else if (blinkState == 1 && currentTime - lastBlinkTime >= 200) {
-            strip.setPixelColor(0, strip.Color(0, 0, 0));  // Off
-            strip.show();
-            lastBlinkTime = currentTime;
-            blinkState = 0;
-            blinkCount++;
-        }
-    } else {
-        blinkCount = 0;  // Reset for the next call
-    }
-}
-
 static std::string niceSize(unsigned size) {
     static char buffer[20];
     if (size < 1024) {
