@@ -1,11 +1,10 @@
-#include "../eventLoop.hpp"
+#include "../../const.hpp"
 #include "../wifi.hpp"
 #include "WiFi.h"
 
 class Esp32Wifi : public IWifi {
   public:
-    Esp32Wifi(ILogging &logger, IEventLoop &eventLoop)
-        : IWifi(logger, eventLoop) {
+    Esp32Wifi(ILogging &logger) : IWifi(logger) {
     }
 
     void setup() override {
@@ -14,16 +13,17 @@ class Esp32Wifi : public IWifi {
         WiFi.mode(WIFI_STA);
     }
 
-    void connect(const char *ssid, const char *password) override {
+    auto connect(const char *ssid, const char *password)
+        -> std::vector<int> override {
         logger.info("Connecting to WiFi with SSID %s %s", ssid);
         newConnectionRequested = true;
         remainingRetries = 20;
-        eventLoop.postEvent(EVENT_WIFI_CONNECTING);
+        return {EVENT_WIFI_CONNECTING};
     }
 
-    void tick() override {
+    auto tick() -> std::vector<int> override {
         if (!newConnectionRequested) {
-            return;
+            return {};
         }
 
         const unsigned long retryDelay = 1000;
@@ -35,17 +35,19 @@ class Esp32Wifi : public IWifi {
             if (isConnected()) {
                 logger.info("WiFi connected with IP: %s",
                             WiFi.localIP().toString().c_str());
-                eventLoop.postEvent(EVENT_WIFI_CONNECTED);
                 newConnectionRequested = false;
-            } else if (newConnectionRequested) {
+                return {EVENT_WIFI_CONNECTED};
+            }
+            if (newConnectionRequested) {
                 logger.info("Retrying connection...");
                 WiFi.reconnect();
                 remainingRetries--;
             } else if (remainingRetries == 0) {
                 logger.info("WiFi connection failed");
-                eventLoop.postEvent(EVENT_WIFI_FAILED);
+                return {EVENT_WIFI_FAILED};
             }
         }
+        return {};
     }
 
     auto isConnected() -> bool override {

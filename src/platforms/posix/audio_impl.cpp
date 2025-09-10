@@ -2,13 +2,13 @@
 #include <chrono>
 #include <cstdio>
 #include <string>
+#include "../../const.hpp"
 #include "../audio.hpp"
 #include "../logging.hpp"
 
 class PosixAudio : public IAudio {
   public:
-    PosixAudio(ILogging &logger, IEventLoop &eventLoop)
-        : IAudio(logger, eventLoop) {
+    PosixAudio(ILogging &logger) : IAudio(logger) {
     }
 
     void setup() override {
@@ -21,17 +21,19 @@ class PosixAudio : public IAudio {
         playStartTime = std::chrono::steady_clock::now();
     }
 
-    void tick() override {
+    auto tick() -> std::vector<int> override {
+        std::vector<int> events = {};
         // simulate audio playing for 5 seconds. After time is elapsed, set
         // start-time back to unset
         if (playStartTime != kUnsetTime) {
             auto now = std::chrono::steady_clock::now();
-            eventLoop.postEvent(SOUND_PLAY_STARTED);
+            events.push_back(SOUND_PLAY_STARTED);
             if (now - playStartTime >= std::chrono::seconds(5)) {
                 playStartTime = kUnsetTime;
-                eventLoop.postEvent(SOUND_PLAY_STOPPED);
+                events.push_back(SOUND_PLAY_STOPPED);
             }
         }
+        return events;
     }
 
   private:

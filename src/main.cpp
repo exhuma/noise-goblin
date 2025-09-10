@@ -16,43 +16,39 @@
     #include "platforms/esp32/audio_impl.cpp"
     #include "platforms/esp32/config_impl.cpp"
     #include "platforms/esp32/config_ui.cpp"
-    #include "platforms/esp32/event_loop_impl.cpp"
     #include "platforms/esp32/http_impl.cpp"
     #include "platforms/esp32/library_impl.cpp"
     #include "platforms/esp32/logging_impl.cpp"
     #include "platforms/esp32/ui_impl.cpp"
     #include "platforms/esp32/wifi_impl.cpp"
-Esp32EventLoop eventLoop;
 Esp32Logging logging;
 Esp32ConfigUi configUi(logging);
-Esp32Wifi wifi(logging, eventLoop);
-Esp32Audio audio(logging, eventLoop);
+Esp32Wifi wifi(logging);
+Esp32Audio audio(logging);
 Esp32Config config(logging, configUi);
-Esp32Ui ui(logging, eventLoop);
+Esp32Ui ui(logging);
 Esp32Http http(logging);
 Esp32Library library(logging, http, config);
 #else
     #include "platforms/posix/audio_impl.cpp"
     #include "platforms/posix/config_impl.cpp"
     #include "platforms/posix/config_ui.cpp"
-    #include "platforms/posix/event_loop_impl.cpp"
     #include "platforms/posix/http_impl.cpp"
     #include "platforms/posix/library_impl.cpp"
     #include "platforms/posix/logging_impl.cpp"
     #include "platforms/posix/ui_impl.cpp"
     #include "platforms/posix/wifi_impl.cpp"
-PosixEventLoop eventLoop;
 PosixLogging logging;
 PosixConfigUi configUi(logging);
-PosixWifi wifi(logging, eventLoop);
-PosixAudio audio(logging, eventLoop);
+PosixWifi wifi(logging);
+PosixAudio audio(logging);
 PosixConfig config(logging, configUi);
-PosixUserInterface ui(logging, eventLoop);
+PosixUserInterface ui(logging);
 PosixHttp http(logging);
 PosixLibrary library(logging, http, config);
 #endif
 
-Application app(config, wifi, logging, audio, ui, eventLoop, library, configUi);
+Application app(config, wifi, logging, audio, ui, library, configUi);
 
 // The Arduino entry-point for "run-once" initialisations.
 void setup() {
@@ -69,7 +65,7 @@ auto main() -> int {
     setup();
     while (true) {
         loop();
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        usleep(50 * 1000);  // Sleep for 50 milliseconds
     }
     return 0;
 }

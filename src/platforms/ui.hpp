@@ -1,6 +1,6 @@
 #pragma once
+#include <vector>
 #include "../enum.hpp"
-#include "eventLoop.hpp"
 #include "logging.hpp"
 
 /// @brief The user-interface subsystem
@@ -10,8 +10,7 @@
 /// The responsibility of the User-Interface is to interact with the user.
 /// Collect input, provide feedback.
 struct IUserInterface {
-    IUserInterface(ILogging &logger, IEventLoop &eventLoop)
-        : logger(logger), eventLoop(eventLoop) {
+    IUserInterface(ILogging &logger) : logger(logger) {
     }
 
     /// @brief Virtual destructor for proper cleanup of derived classes.
@@ -21,9 +20,8 @@ struct IUserInterface {
     virtual void setup() = 0;
 
     /// @brief Updates the user-interface state.
-    virtual void tick(AppState state) = 0;
+    virtual auto tick(AppState state) -> std::vector<int> = 0;
 
   protected:
     ILogging &logger;
-    IEventLoop &eventLoop;
 };

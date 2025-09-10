@@ -1,9 +1,11 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <unistd.h>
+#include <array>
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include "../../const.hpp"
 #include "../../enum.hpp"
 #include "../logging.hpp"
 #include "../ui.hpp"
@@ -39,8 +41,7 @@ static auto rpad(const std::string &str, std::size_t width) -> std::string {
 
 class PosixUserInterface : public IUserInterface {
   public:
-    PosixUserInterface(ILogging &logger, IEventLoop &eventLoop)
-        : IUserInterface(logger, eventLoop) {
+    PosixUserInterface(ILogging &logger) : IUserInterface(logger) {
     }
 
     void setup() override {
@@ -48,7 +49,7 @@ class PosixUserInterface : public IUserInterface {
         logger.debug("UI Setup complete");
     }
 
-    void tick(AppState state) override {
+    auto tick(AppState state) -> std::vector<int> override {
         // Braille spinner characters encoded as UTF-8
         static const std::array<const char *, 10> spinner = {
             u8"\u280B", u8"\u2819", u8"\u2839", u8"\u2838", u8"\u283C",
@@ -63,16 +64,18 @@ class PosixUserInterface : public IUserInterface {
         spinnerIndex = (spinnerIndex + 1) % spinner.size();
 
         // Handle key-presses
+        std::vector<int> events({});
         setNonCanonicalMode();
         if (isKeyPressed()) {
             char c;
             read(STDIN_FILENO, &c, 1);
             if (c == 'r') {
-                eventLoop.postEvent(EVENT_RESET_BUTTON_PRESSED);
+                events.push_back(EVENT_RESET_BUTTON_PRESSED);
             } else if (c == 'p') {
-                eventLoop.postEvent(EVENT_PLAY_BUTTON_PRESSED);
+                events.push_back(EVENT_PLAY_BUTTON_PRESSED);
             }
         }
         restoreTerminalMode();
+        return events;
     }
 };
