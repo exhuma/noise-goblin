@@ -8,7 +8,6 @@
 #include "platforms/audio.hpp"
 #include "platforms/config.hpp"
 #include "platforms/config_ui.hpp"
-#include "platforms/eventLoop.hpp"
 #include "platforms/library.hpp"
 #include "platforms/logging.hpp"
 #include "platforms/ui.hpp"
@@ -23,14 +22,12 @@
 /// @param logger Reference to the logging subsystem.
 /// @param audio Reference to the audio subsystem.
 /// @param ui Reference to the user interface subsystem.
-/// @param eventLoop Reference to the event loop subsystem.
 /// @param library Reference to the library subsystem.
 /// @param configUi Reference to the configuration UI subsystem.
 class Application {
   public:
     explicit Application(IConfig &config, IWifi &wifi, ILogging &logger,
-                         IAudio &audio, IUserInterface &ui,
-                         IEventLoop &eventLoop, ILibrary &library,
+                         IAudio &audio, IUserInterface &ui, ILibrary &library,
                          IConfigUi &configUi);
     /// @brief One-time startup initialisation code
     /// @details This implements the default Arduino setup() entry-point
@@ -46,7 +43,6 @@ class Application {
     IWifi &wifi;
     IAudio &audio;
     IUserInterface &ui;
-    IEventLoop &eventLoop;
     ILibrary &library;
     IConfigUi &configUi;
     AppState currentState = AppState::Startup;

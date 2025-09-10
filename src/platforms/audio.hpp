@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "eventLoop.hpp"
+#include <vector>
 #include "logging.hpp"
 
 /// @brief The Audio subsystem
@@ -8,8 +8,7 @@
 ///
 /// Provides an abstract interface for audio operations.
 struct IAudio {
-    IAudio(ILogging &logger, IEventLoop &eventLoop)
-        : logger(logger), eventLoop(eventLoop) {
+    IAudio(ILogging &logger) : logger(logger) {
     }
 
     /// @brief Virtual destructor for proper cleanup of derived classes.
@@ -23,9 +22,8 @@ struct IAudio {
     virtual void play(std::string url) = 0;
 
     /// @brief Performs periodic audio-related tasks or updates.
-    virtual void tick() = 0;
+    virtual auto tick() -> std::vector<int> = 0;
 
   protected:
     ILogging &logger;
-    IEventLoop &eventLoop;
 };

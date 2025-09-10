@@ -3,6 +3,7 @@
 #include <Adafruit_SSD1306.h>
 #include <SPI.h>
 #include <Wire.h>
+#include "../../const.hpp"
 #include "../../enum.hpp"
 #include "../ui.hpp"
 #include "Arduino.h"
@@ -90,8 +91,7 @@ static void drawProgressBar(unsigned progress, unsigned int posX,
 
 class Esp32Ui : public IUserInterface {
   public:
-    Esp32Ui(ILogging &logger, IEventLoop &eventLoop)
-        : IUserInterface(logger, eventLoop) {
+    Esp32Ui(ILogging &logger) : IUserInterface(logger) {
     }
 
     void setup() override {
@@ -168,27 +168,29 @@ class Esp32Ui : public IUserInterface {
         strip.show();
     }
 
-    void tick(AppState state) override {
+    auto tick(AppState state) -> std::vector<int> override {
         static unsigned long lastResetButtonPress = 0;
         static unsigned long lastPlayButtonPress = 0;
         const unsigned long debounceDelay = 200;
         unsigned long currentTime = millis();
         std::array<char, 16> buffer;
         sprintf(buffer.data(), "%d", digitalRead(RESET_BUTTON));
+        std::vector<int> events = {};
         if (digitalRead(RESET_BUTTON) == LOW &&
             (currentTime - lastResetButtonPress) > debounceDelay) {
             lastResetButtonPress = currentTime;
             logger.debug("Reset button pressed");
-            eventLoop.postEvent(EVENT_RESET_BUTTON_PRESSED);
+            events.push_back(EVENT_RESET_BUTTON_PRESSED);
         }
         if (digitalRead(PLAY_BUTTON) == LOW &&
             (currentTime - lastPlayButtonPress) > debounceDelay) {
             lastPlayButtonPress = currentTime;
             logger.debug("Play button pressed");
-            eventLoop.postEvent(EVENT_PLAY_BUTTON_PRESSED);
+            events.push_back(EVENT_PLAY_BUTTON_PRESSED);
         }
         updateLed(state);
         updateMemStats(state);
+        return events;
     }
 
   private:

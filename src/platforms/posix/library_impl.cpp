@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include "../library.hpp"
 
@@ -8,7 +9,9 @@ class PosixLibrary : public ILibrary {
     }
 
     auto getRandomSound() -> std::string override {
-        logger.info("Getting random sound");
+        if (soundByteNames.size() <= 0) {
+            return "";
+        }
         int index = rand() % soundByteNames.size();
         auto url = soundByteNames[index];
         auto baseUrl =

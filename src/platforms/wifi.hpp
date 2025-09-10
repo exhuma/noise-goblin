@@ -1,5 +1,5 @@
 #pragma once
-#include "eventLoop.hpp"
+#include <vector>
 #include "logging.hpp"
 
 /// @brief The WiFi subsystem
@@ -7,8 +7,7 @@
 ///
 /// Provides an abstract interface for WiFi operations.
 struct IWifi {
-    IWifi(ILogging &logger, IEventLoop &eventLoop)
-        : logger(logger), eventLoop(eventLoop) {
+    IWifi(ILogging &logger) : logger(logger) {
     }
 
     /// @brief Virtual destructor for proper cleanup of derived classes.
@@ -20,10 +19,11 @@ struct IWifi {
     /// @brief Connects to a WiFi network using the provided SSID and password.
     /// @param ssid The SSID (network name) to connect to.
     /// @param password The password for the WiFi network.
-    virtual void connect(const char *ssid, const char *password) = 0;
+    virtual auto connect(const char *ssid, const char *password)
+        -> std::vector<int> = 0;
 
     /// @brief Performs periodic WiFi-related tasks or updates.
-    virtual void tick() = 0;
+    virtual auto tick() -> std::vector<int> = 0;
 
     /// @brief Checks if the device is currently connected to a WiFi network.
     /// @return True if connected, false otherwise.
@@ -31,5 +31,4 @@ struct IWifi {
 
   protected:
     ILogging &logger;
-    IEventLoop &eventLoop;
 };

@@ -1,15 +1,14 @@
 #include <string>
 #include "../audio.hpp"
-#include "../eventLoop.hpp"
 #include "Audio.h"
 
 static Audio esp32_audio;
 
 class Esp32Audio : public IAudio {
   public:
-    Esp32Audio(ILogging &logger, IEventLoop &eventLoop)
-        : IAudio(logger, eventLoop) {
+    Esp32Audio(ILogging &logger) : IAudio(logger) {
     }
+
     void setup() override {
         esp32_audio.setPinout(17,  // I2S_BCLK
                               16,  // I2S_LRC
@@ -28,7 +27,7 @@ class Esp32Audio : public IAudio {
         currentUrl = url;
     }
 
-    void tick() override {
+    auto tick() -> std::vector<int> override {
         if (!currentUrl.empty()) {
             esp32_audio.stopSong();
             const bool success = esp32_audio.connecttohost(currentUrl.c_str());
@@ -38,6 +37,7 @@ class Esp32Audio : public IAudio {
             }
         }
         esp32_audio.loop();
+        return {};
     }
 
   private:

@@ -1,11 +1,11 @@
 #include <chrono>
+#include "../../const.hpp"
 #include "../logging.hpp"
 #include "../wifi.hpp"
 
 class PosixWifi : public IWifi {
   public:
-    PosixWifi(ILogging &logger, IEventLoop &eventLoop)
-        : IWifi{logger, eventLoop} {
+    PosixWifi(ILogging &logger) : IWifi{logger} {
         startupTime = std::chrono::system_clock::now();
     }
 
@@ -13,18 +13,20 @@ class PosixWifi : public IWifi {
         logger.info("Resetting WiFi");
     }
 
-    void connect(const char *ssid, const char *password) override {
+    auto connect(const char *ssid, const char *password)
+        -> std::vector<int> override {
         logger.info("Connecting to WiFi with SSID %s using password %s", ssid,
                     password);
         newConnectionRequested = true;
-        eventLoop.postEvent(EVENT_WIFI_CONNECTING);
+        return {EVENT_WIFI_CONNECTING};
     }
 
-    void tick() override {
+    auto tick() -> std::vector<int> override {
         if (newConnectionRequested && isConnected()) {
-            eventLoop.postEvent(EVENT_WIFI_CONNECTED);
             newConnectionRequested = false;
+            return {EVENT_WIFI_CONNECTED};
         }
+        return {};
     }
 
     auto isConnected() -> bool override {
