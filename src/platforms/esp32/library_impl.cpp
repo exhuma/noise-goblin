@@ -14,7 +14,7 @@ class Esp32Library : public ILibrary {
             return "";
         }
         srand(static_cast<unsigned int>(time(nullptr)));
-        int index = rand() % 100;
+        int index = rand() % soundByteNames.size();
         auto url = soundByteNames[index];
         auto baseUrl =
             config.get(LIBRARY_BASE_URL_KEY);  // TODO: We could cache this
