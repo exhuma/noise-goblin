@@ -36,9 +36,9 @@ static auto _has_config(ILogging &logger) -> bool {
     return (err == ESP_OK);
 }
 
-class Esp32Config : public IConfig {
+class NoiseConfig : public IConfig {
   public:
-    Esp32Config(ILogging &logger, IConfigUi &configUi)
+    NoiseConfig(ILogging &logger, IConfigUi &configUi)
         : IConfig(logger, configUi) {
     }
 

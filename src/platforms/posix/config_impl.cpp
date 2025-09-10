@@ -71,9 +71,9 @@ static auto save_config(ILogging &logger) -> bool {
     return true;
 }
 
-class PosixConfig : public IConfig {
+class NoiseConfig : public IConfig {
   public:
-    PosixConfig(ILogging &logger, IConfigUi &configUi)
+    NoiseConfig(ILogging &logger, IConfigUi &configUi)
         : IConfig(logger, configUi) {
     }
 

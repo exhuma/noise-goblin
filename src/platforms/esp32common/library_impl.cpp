@@ -1,9 +1,9 @@
 #include <string>
 #include "../library.hpp"
 
-class Esp32Library : public ILibrary {
+class NoiseLibrary : public ILibrary {
   public:
-    Esp32Library(ILogging &logger, IHttp &http, IConfig &config)
+    NoiseLibrary(ILogging &logger, IHttp &http, IConfig &config)
         : ILibrary(logger, http, config) {
     }
 

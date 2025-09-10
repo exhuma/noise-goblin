@@ -39,9 +39,9 @@ static auto rpad(const std::string &str, std::size_t width) -> std::string {
     return str;
 }
 
-class PosixUserInterface : public IUserInterface {
+class NoiseUi : public IUserInterface {
   public:
-    PosixUserInterface(ILogging &logger) : IUserInterface(logger) {
+    NoiseUi(ILogging &logger) : IUserInterface(logger) {
     }
 
     void setup() override {

@@ -73,9 +73,9 @@ static auto replace(std::string str, const char* from,
     return str;
 }
 
-class Esp32ConfigUi : public IConfigUi {
+class NoiseConfigUi : public IConfigUi {
   public:
-    Esp32ConfigUi(ILogging& logger) : IConfigUi(logger) {
+    NoiseConfigUi(ILogging& logger) : IConfigUi(logger) {
     }
 
     void start() override {

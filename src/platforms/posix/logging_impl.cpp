@@ -13,7 +13,7 @@ static auto timestamp() -> std::string {
     return {buf.data()};
 }
 
-class PosixLogging : public ILogging {
+class NoiseLogging : public ILogging {
     // NOTE: The functions have been defused (implementation removed) in favour
     // of a more "interactive" CLI ui for testing using proper events to better
     // represent the execution mode on the ESP32 (main-loop).

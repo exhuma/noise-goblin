@@ -7,9 +7,9 @@
 #include <iostream>
 #include <map>
 
-class PosixConfigUi : public IConfigUi {
+class NoiseConfigUi : public IConfigUi {
   public:
-    PosixConfigUi(ILogging& logger) : IConfigUi(logger) {
+    NoiseConfigUi(ILogging& logger) : IConfigUi(logger) {
     }
 
     void start() override {

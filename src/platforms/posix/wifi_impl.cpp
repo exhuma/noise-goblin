@@ -3,9 +3,9 @@
 #include "../logging.hpp"
 #include "../wifi.hpp"
 
-class PosixWifi : public IWifi {
+class NoiseWifi : public IWifi {
   public:
-    PosixWifi(ILogging &logger) : IWifi{logger} {
+    NoiseWifi(ILogging &logger) : IWifi{logger} {
         startupTime = std::chrono::system_clock::now();
     }
 

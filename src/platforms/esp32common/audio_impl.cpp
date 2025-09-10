@@ -4,9 +4,9 @@
 
 static Audio esp32_audio;
 
-class Esp32Audio : public IAudio {
+class NoiseAudio : public IAudio {
   public:
-    Esp32Audio(ILogging &logger) : IAudio(logger) {
+    NoiseAudio(ILogging &logger) : IAudio(logger) {
     }
 
     void setup() override {

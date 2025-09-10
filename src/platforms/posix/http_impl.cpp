@@ -8,9 +8,9 @@
 #include "curl/curl.h"
 #include "nlohmann/json.hpp"
 
-class PosixHttp : public IHttp {
+class NoiseHttp : public IHttp {
   public:
-    PosixHttp(ILogging &logger) : IHttp(logger) {
+    NoiseHttp(ILogging &logger) : IHttp(logger) {
     }
     auto getResourceNames(std::string url)
         -> std::vector<std::string> override {

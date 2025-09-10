@@ -4,7 +4,7 @@
 
 #define MAX_LOG_SIZE 512
 
-class Esp32Logging : public ILogging {
+class NoiseLogging : public ILogging {
     void debug(const char *fmt, ...) override {
         std::array<char, MAX_LOG_SIZE> msg;
         va_list args;

@@ -2,9 +2,9 @@
 #include "../wifi.hpp"
 #include "WiFi.h"
 
-class Esp32Wifi : public IWifi {
+class NoiseWifi : public IWifi {
   public:
-    Esp32Wifi(ILogging &logger) : IWifi(logger) {
+    NoiseWifi(ILogging &logger) : IWifi(logger) {
     }
 
     void setup() override {

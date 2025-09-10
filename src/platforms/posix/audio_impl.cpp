@@ -6,9 +6,9 @@
 #include "../audio.hpp"
 #include "../logging.hpp"
 
-class PosixAudio : public IAudio {
+class NoiseAudio : public IAudio {
   public:
-    PosixAudio(ILogging &logger) : IAudio(logger) {
+    NoiseAudio(ILogging &logger) : IAudio(logger) {
     }
 
     void setup() override {

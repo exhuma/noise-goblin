@@ -2,9 +2,9 @@
 #include <string>
 #include "../library.hpp"
 
-class PosixLibrary : public ILibrary {
+class NoiseLibrary : public ILibrary {
   public:
-    PosixLibrary(ILogging &logger, IHttp &http, IConfig &config)
+    NoiseLibrary(ILogging &logger, IHttp &http, IConfig &config)
         : ILibrary(logger, http, config) {
     }
 

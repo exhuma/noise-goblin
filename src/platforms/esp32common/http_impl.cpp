@@ -33,9 +33,9 @@ static void collectResources(WiFiClient* client,
     }
 }
 
-class Esp32Http : public IHttp {
+class NoiseHttp : public IHttp {
   public:
-    Esp32Http(ILogging& logger) : IHttp(logger) {
+    NoiseHttp(ILogging& logger) : IHttp(logger) {
     }
 
     auto getResourceNames(std::string url)

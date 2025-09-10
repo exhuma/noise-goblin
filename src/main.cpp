@@ -12,24 +12,15 @@
 #include "app.hpp"
 
 // Import and instantiate modules for the currently selected build target
-#if defined(BUILD_ESP32)
-    #include "platforms/esp32/audio_impl.cpp"
-    #include "platforms/esp32/config_impl.cpp"
-    #include "platforms/esp32/config_ui.cpp"
-    #include "platforms/esp32/http_impl.cpp"
-    #include "platforms/esp32/library_impl.cpp"
-    #include "platforms/esp32/logging_impl.cpp"
-    #include "platforms/esp32/ui_impl.cpp"
-    #include "platforms/esp32/wifi_impl.cpp"
-Esp32Logging logging;
-Esp32ConfigUi configUi(logging);
-Esp32Wifi wifi(logging);
-Esp32Audio audio(logging);
-Esp32Config config(logging, configUi);
-Esp32Ui ui(logging);
-Esp32Http http(logging);
-Esp32Library library(logging, http, config);
-#else
+#if defined(BUILD_ESP32S3) || defined(BUILD_ESP32)
+    #include "platforms/esp32common/audio_impl.cpp"
+    #include "platforms/esp32common/config_impl.cpp"
+    #include "platforms/esp32common/config_ui.cpp"
+    #include "platforms/esp32common/http_impl.cpp"
+    #include "platforms/esp32common/library_impl.cpp"
+    #include "platforms/esp32common/logging_impl.cpp"
+    #include "platforms/esp32common/wifi_impl.cpp"
+#elif defined(BUILD_POSIX)
     #include "platforms/posix/audio_impl.cpp"
     #include "platforms/posix/config_impl.cpp"
     #include "platforms/posix/config_ui.cpp"
@@ -38,15 +29,22 @@ Esp32Library library(logging, http, config);
     #include "platforms/posix/logging_impl.cpp"
     #include "platforms/posix/ui_impl.cpp"
     #include "platforms/posix/wifi_impl.cpp"
-PosixLogging logging;
-PosixConfigUi configUi(logging);
-PosixWifi wifi(logging);
-PosixAudio audio(logging);
-PosixConfig config(logging, configUi);
-PosixUserInterface ui(logging);
-PosixHttp http(logging);
-PosixLibrary library(logging, http, config);
 #endif
+
+#if defined(BUILD_ESP32S3)
+    #include "platforms/esp32s3/ui_impl.cpp"
+#elif defined(BUILD_ESP32)
+    #include "platforms/esp32/ui_impl.cpp"
+#endif
+
+NoiseLogging logging;
+NoiseConfigUi configUi(logging);
+NoiseWifi wifi(logging);
+NoiseAudio audio(logging);
+NoiseConfig config(logging, configUi);
+NoiseHttp http(logging);
+NoiseLibrary library(logging, http, config);
+NoiseUi ui(logging);
 
 Application app(config, wifi, logging, audio, ui, library, configUi);
 
