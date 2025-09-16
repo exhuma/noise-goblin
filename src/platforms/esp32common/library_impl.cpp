@@ -8,36 +8,19 @@ class NoiseLibrary : public ILibrary {
     }
 
     auto getRandomSound() -> std::string override {
-        logger.info("Getting random sound");
-        if (soundByteNames.empty()) {
-            logger.info("No sound bytes available");
+        std::string serverUrl = config.get(LIBRARY_BASE_URL_KEY);
+        if (serverUrl.empty()) {
+            logger.error("Server URL is not configured");
             return "";
         }
-        srand(static_cast<unsigned int>(time(nullptr)));
-        int index = rand() % soundByteNames.size();
-        auto url = soundByteNames[index];
-        auto baseUrl =
-            config.get(LIBRARY_BASE_URL_KEY);  // TODO: We could cache this
-        static thread_local std::string urlBuffer;
-        urlBuffer.clear();
-        urlBuffer.reserve(baseUrl.size() + 1 + url.size());
-        urlBuffer.append(baseUrl);
-        urlBuffer.push_back('/');
-        urlBuffer.append(url);
-        return std::string(urlBuffer);
+        if (serverUrl.back() == '/') {
+            serverUrl.pop_back();  // Remove trailing slash if present
+        }
+        std::string_view urlPath = "/randomjingle";
+        std::string fullUrl = serverUrl + std::string(urlPath);
+        return fullUrl;
     }
 
     void tick() override {
-        if (soundByteNames.size() == 0) {
-            auto baseUrl = config.get(LIBRARY_BASE_URL_KEY);
-            if (baseUrl.empty()) {
-                logger.debug("No library base URL configured");
-                return;
-            }
-            logger.info("Loading sounds from %s", baseUrl.c_str());
-            auto response = http.getResourceNames(baseUrl);
-            logger.info("Loaded %d resources", response.size());
-            soundByteNames = std::move(response);
-        }
     }
 };
