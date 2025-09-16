@@ -12,8 +12,7 @@
 #include "app.hpp"
 
 // Import and instantiate modules for the currently selected build target
-#if defined(BUILD_ESP32S3) || defined(BUILD_ESP32)
-    #include "platforms/esp32common/audio_impl.cpp"
+#if defined(BUILD_ESP32S3) || defined(BUILD_ESP32) || defined(BUILD_XIAOESP32)
     #include "platforms/esp32common/config_impl.cpp"
     #include "platforms/esp32common/config_ui.cpp"
     #include "platforms/esp32common/http_impl.cpp"
@@ -32,9 +31,14 @@
 #endif
 
 #if defined(BUILD_ESP32S3)
+    #include "platforms/esp32s3/audio_impl.cpp"
     #include "platforms/esp32s3/ui_impl.cpp"
 #elif defined(BUILD_ESP32)
+    #include "platforms/esp32/audio_impl.cpp"
     #include "platforms/esp32/ui_impl.cpp"
+#elif defined(BUILD_XIAOESP32)
+    #include "platforms/xiaoesp32/audio_impl.cpp"
+    #include "platforms/xiaoesp32/ui_impl.cpp"
 #endif
 
 NoiseLogging logging;
