@@ -136,7 +136,7 @@ class NoiseConfigUi : public IConfigUi {
     WebServer webServer;
     PortalState PORTAL_STATE = PORTAL_OFF;
     // default AP name and password
-    const char* apSSID = "ESP32-Setup";
+    const char* apSSID = "Noise Goblin Setup - Go to 192.168.4.1";
     const char* apPassword = "12345678";
 
     void handleRoot() {
