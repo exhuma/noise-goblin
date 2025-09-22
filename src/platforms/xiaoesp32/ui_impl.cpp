@@ -68,6 +68,24 @@ class NoiseUi : public IUserInterface {
             logger.debug("Play button pressed");
             events.push_back(EVENT_PLAY_BUTTON_PRESSED);
         }
+
+        static unsigned long playButtonPressStartTime = 0;
+        const unsigned long resetPressDuration = 10000;  // 10 seconds
+
+        if (digitalRead(PLAY_BUTTON) == LOW) {
+            if (playButtonPressStartTime == 0) {
+                playButtonPressStartTime = millis();
+            } else if (millis() - playButtonPressStartTime >=
+                       resetPressDuration) {
+                logger.debug(
+                    "Play button held for 10 seconds, emitting reset event");
+                events.push_back(EVENT_RESET_BUTTON_PRESSED);
+                playButtonPressStartTime = 0;  // Reset the timer
+            }
+        } else {
+            playButtonPressStartTime = 0;  // Reset if button is released
+        }
+
         return events;
     }
 
